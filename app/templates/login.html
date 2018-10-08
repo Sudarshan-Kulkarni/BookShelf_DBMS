@@ -17,8 +17,8 @@
                 top: 50%;
                 left: 20%;
                 transform: translate(-50%,-50%);
-                width: 350px;
-                height: 350px;
+                width: 400px;
+                height: 400px;
                 padding: 23px 40px;
                 box-sizing:border-box;
                 background: rgba(0,0,0,0.6);
@@ -69,9 +69,11 @@
                 width: 100px;
                 border: none;
                 outline: none;
-                height: 25px;
+                height: 35px;
                 color:#000;
+                margin-top: 50px;
                 font-size:16px;
+                margin-left: 30px;
                 background:#f2d5c0;
                 cursor:pointer;
                 border-radius: 5px;
@@ -80,11 +82,12 @@
             .loginbox button[type="reset"]
             {
                 width: 100px;
-                position: absolute;
                 border: none;
                 outline: none;
-                height: 25px;
+                height: 35px;
                 color:#000;
+                margin-left: 30px;
+                margin-top: 50px;
                 font-size:16px;
                 background:#f2d5c0;
                 cursor:pointer;
@@ -101,7 +104,12 @@
             {
                 background:#ec6f17;
                 color:#fff;
-            }    
+            }  
+            a
+            {
+                color:#fff;
+                font-size: 18px;
+            }  
         </style>
     </head>
     <body style="background: url(http://studyadvantage.co/wp-content/uploads/2017/02/online-courses.jpg) no-repeat  ; background-size: cover; " >
@@ -116,9 +124,14 @@
                 {% if msg %}
                 <br>
                 <small style = "color:red;">{{ msg }}</small>
+                {% else %}
+                <br>
                 {% endif %}
-                <br><br><br>
-                <button type="submit" style='margin-right:16px'>Submit</button>
+                <br>
+                <br>
+                <a href = "/signup">Register now</a>
+                <br>
+                <button type="submit" style='margin-right:16px'>Sign In</button>
                 <button type="reset" style='margin-right:16px'>Cancel</button>
             </form>
         </div>

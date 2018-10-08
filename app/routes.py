@@ -3,21 +3,20 @@ from flask import redirect, url_for, request, render_template
 from .queries import *
 app.config['SECRET_KEY'] = "YOUWILLNEVERGUESSTHIS"
 
+
+#To create the database for the first time
 #create_db()
 
 User_Data = None
 
-#Home Page 
+# @app.route('/home')
+# def home():
+#     return render_template('home.html')
+
+
+#Home/Login Page
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 @app.route('/')
-@app.route('/home')
-def home():
-    return render_template('home.html')
-
-
-#Login Page
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 @app.route('/login')
 def login():
     return render_template('login.html')
