@@ -37,22 +37,30 @@ def create_db():
 
 def add_user(name,street,city,state,country,contact_no,email,password):
     conn,cur = connect()
-    cur.execute("SELECT * FROM user_info where email = ?;",(email))
+    cur.execute("SELECT * FROM user_info where email = ?;",(email,))
     data = cur.fetchall()
     if(data):
+        conn.close()
         return 0
     else:
-        cur.execute("INSERT INTO TABLE user_info values(?,?,?,?,?,?,?,?);",[name,street,city,state,country,contact_no,email,password])
+        cur.execute("INSERT INTO user_info values(null,?,?,?,?,?,?,?,?);",(name,street,city,state,country,contact_no,email,password,))
         conn.commit()
         conn.close()
         return 1        
+
+
+
+#Selection
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def verify_user(email,password):
     conn,cur = connect()
     cur.execute("SELECT * FROM user_info where email = ? and password = ?;",[email,password])
     data = cur.fetchone()
     if(data):
+        conn.close()
         return 1,data
     else:
+        conn.close()
         return 0,[]
 

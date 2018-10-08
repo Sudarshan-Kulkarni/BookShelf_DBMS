@@ -21,6 +21,7 @@
                 box-sizing:border-box;
                 background:#fff;
                 margin-top: 30px;
+                margin-left: 70px;
                 border-bottom:1px solid #fff;
                 background:rgba(0,0,0,0.6);
             }
@@ -198,7 +199,7 @@
     </head>
     <body style="background:url(https://egranthalaya.nic.in/images/2.jpg) no-repeat; background-size:cover;">
         <div class="signbox">
-            <form id="form1" action="" method="post">
+            <form id="form" action="/verify2" method="POST">
                 <h1>Sign Up</h1>
                 <p class="name">Name</p>
                 <input type="text" name="Fname" placeholder="First Name" class="ipt" required>
@@ -207,15 +208,27 @@
                 <input type="text" name="email" placeholder="abc@xyz.com" class="eml" required><br>
                 <p class="pass">Password</p>
                 <input type="password" name="password" placeholder="Password" class="pwd" required>
-                <input type="password" name="Confirm_password" placeholder="Confirm Password" class="pwd" required><br><br><br>
+                
+                <input type="password" name="Confirm_password" placeholder="Confirm Password" class="pwd" required><br>
+                {% if msg1 %}
+                <small style = "color:red; margin-left:35px ">{{ msg1 }}</small><br><br>
+                {%else%}
+                <br><br>
+                {% endif %}
                 <p class="pass">Address</p>
                 <input type="text" name="Street" placeholder="Street / Locality" class="street" required>
                 <input type="text" name="City" placeholder="City" class="city" required><br><br>
                 <input type="text" name="State" placeholder="State" class="state" required>
                 <input type="text" name="Country" placeholder="Country" class="country" required><br><br><br>
                 <p class="pass">Contact Number</p>
-                <input type="text" name="Phone" placeholder="Contact Number" class="phno" required><br><br><br><br>
-                <button type="submit" style='margin-right:16px' class="b1">Submit</button>
+                <input type="text" name="Phone" placeholder="Contact Number" class="phno" required><br>
+                {% if msg2 %}
+                <small style = "color:red; margin-left:35px ">{{ msg2 }}</small>
+                <br><br><br>
+                {% else %}
+                <br><br><br>
+                {% endif %}
+                <button type="submit" style='margin-right:16px' class="b1">Register</button>
                 <button type="reset" style='margin-right:16px' Class="b2">Cancel</button>
             </form>
         </div>

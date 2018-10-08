@@ -113,6 +113,10 @@
                 <br><br>
                 <p>Password</p>
                 <input type="password" name="password" placeholder="password" required>
+                {% if msg %}
+                <br>
+                <small style = "color:red;">{{ msg }}</small>
+                {% endif %}
                 <br><br><br>
                 <button type="submit" style='margin-right:16px'>Submit</button>
                 <button type="reset" style='margin-right:16px'>Cancel</button>
