@@ -1,7 +1,7 @@
 from app import app
 from flask import redirect, url_for, request, render_template
 from .queries import *
-#app.config['SECRET_KEY' = "YOUWILLNEVERGUESSTHIS"]
+app.config['SECRET_KEY'] = "YOUWILLNEVERGUESSTHIS"
 
 #create_db()
 
