@@ -1,0 +1,176 @@
+body
+{
+	background: #999;
+ 	padding: 10px 600px;
+ 	font-family: "Open Sans Condensed", sans-serif;
+}
+.signbox
+{
+	top:50%;
+	right:30%;
+	border-radius:03px;
+	width: 600px;
+	height: 700px;
+	box-sizing:border-box;
+	background:#fff;
+	margin-top: 30px;
+	border-bottom:1px solid #fff;
+	background:rgba(0,0,0,0.6);
+}
+h1
+{
+	color:#fff;
+	text-align:center;
+	font-size:40px;
+	margin-top:30px;
+}
+.ipt
+{
+	
+	width:235px;
+	height:30px;
+	border:none;
+	border-radius:03px;
+	border:1px solid #ccc;
+	margin-left:35px;
+	padding:0 0 0 5px;
+	margin-top:15px;
+	border-left:03px solid #a86464;
+}
+.eml
+{
+	width:235px;
+	height:30px;
+	border:none;
+	border-radius:03px;
+	border:1px solid #ccc;
+	margin-left:35px;
+	padding-left:05px;
+	margin-top:0px;
+	border-left:03px solid #a86464;
+}
+.pwd	
+{
+	width:235px;
+	height:30px;
+	border:none;
+	border-radius:03px;
+	border:1px solid #ccc;
+	margin-left:35px;
+	padding-left:05px;
+	margin-top:10px;
+	border-left:03px solid #a86464;
+}
+.street
+{
+	width:235px;
+	height:30px;
+	border:none;
+	border-radius:03px;
+	border:1px solid #ccc;
+	margin-left:35px;
+	padding-left:05px;
+	margin-top:10px;
+	border-left:03px solid #a86464;
+}
+.city
+{
+	width:235px;
+	height:30px;
+	border:none;
+	border-radius:03px;
+	border:1px solid #ccc;
+	margin-left:35px;
+	padding-left:05px;
+	margin-top:0px;
+	border-left:03px solid #a86464;
+}
+.state
+{
+	width:235px;
+	height:30px;
+	border:none;
+	border-radius:03px;
+	border:1px solid #ccc;
+	margin-left:35px;
+	padding-left:05px;
+	margin-top:10px;
+	border-left:03px solid #a86464;
+}
+.country
+{
+	width:235px;
+	height:30px;
+	border:none;
+	border-radius:03px;
+	border:1px solid #ccc;
+	margin-left:35px;
+	padding-left:05px;
+	margin-top:10px;
+	border-left:03px solid #a86464;
+}
+.phno
+{
+	width:235px;
+	height:30px;
+	border:none;
+	border-radius:03px;
+	border:1px solid #ccc;
+	margin-left:35px;
+	padding-left:05px;
+	margin-top:10px;
+	border-left:03px solid #a86464;
+}
+.b1
+{
+	width: 200px;
+	border: none;
+	outline: none;
+	height: 40px;
+	color:#000;
+	font-size:16px;
+	background:#fff;
+	cursor:pointer;
+	border-radius: 5px;
+	margin-left:70px;
+	padding-left:05px;
+}
+.b2
+{
+	width: 200px;
+	font-size: 16px;
+	position: absolute;
+	border: none;
+	outline: none;
+	height: 40px;
+	color:#000;
+	font-size:16px;
+	background:#fff;
+	cursor:pointer;
+	border-radius: 5px;
+	margin-left:40px;
+	padding-left:05px;
+}
+.b1:hover
+{
+	background:#ec6f17;
+	color:#fff;
+}
+.b2:hover
+{
+	background:#ec6f17;
+	color:#fff;
+}
+
+.name
+{
+	color:#fff;
+	font-size:17px;
+	margin:0 0 0 35px;
+}
+.pass
+{
+	color:#fff;
+	font-size:17px;
+	margin:0 0 0 35px;
+}
