@@ -1,7 +1,7 @@
 from app import app
 from flask import redirect, url_for, request, render_template
 from .queries import *
-app.config['SECRET_KEY'] = "YOUWILLNEVERGUESSTHIS"
+app.config['SECRET_KEY'] = "YOU-WILL-NEVER-GUESS-THIS"
 
 
 #To create the database for the first time
@@ -23,7 +23,7 @@ def login():
 
 
 
-@app.route('/verify',methods = ['POST'])
+@app.route('/verifyLogin',methods = ['POST'])
 def check_credentials():
     
     global User_Data
@@ -42,7 +42,7 @@ def check_credentials():
 def signup():
     return render_template('signup.html')
 
-@app.route('/verify2',methods = ['POST','GET'])
+@app.route('/verifySignUp',methods = ['POST','GET'])
 def get_new_user():
     if(request.method == "POST"):
         password = request.form['password']
