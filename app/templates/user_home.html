@@ -1,19 +1,82 @@
 <html>
     <head>
-        <title>jnew</title>
+        <title>Welcome {{username}}</title>
         <style type="text/css">
+        *
+        {
+            margin:0;
+            padding:0;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+        body
+        {
+            -webkit-background-size:cover;
+            background-size:cover;
+            background-position:center center;
+            height:100vh;
+            background-color: brown;
+        }
+        .menu-area li a
+        {
+            text-decoration:none;
+            color:#fff;
+            letter-spacing:1px;
+            text-transform: uppercase;
+            display:block;
+            padding:0 25px;
+            font-size:14px;
+            line-height:30px;
+            position: relative;
+            z-index: 1;
+        }
+        .menu-area li
+        {
+            list-style:none;
+            display:inline-block;
+        }
+        .custom-padding
+        {
+            padding-top:25px; 
+        }
+        nav
+        {
+            position:relative;
+            padding:10px 20px 10px 10px;
+            text-align:right;
+            z-index:1;
+            background:#333;
+            margin:0 auto;
+            width:calc(100% -60px);
+        }
+        .logo
+        {
+            width:30%;
+            float:left;
+            text-transform:uppercase;
+            color:#fff;
+            font-size:20px;
+            text-align:left;
+            padding-left:2%;
+        }
+        .menu-area li a:hover
+        {
+            background:tomato;
+            color:#fff;
+        }
         button[type="submit"]
         {
-            width: 500px;
-            border: none;
+            width: 350px;
+            border: none;`
             outline: none;
-            height: 500px;
+            height: 350px;
             color:tomato;
-            font-size:16px;
+            font-size:25px;
             background:#f2d5c0;
             cursor:pointer;
-            border-radius: 5px;
-            margin-left:200px;
+            border-radius: 15px;
+            margin-left:250px;
             margin-top:200px;
         }
 
@@ -22,9 +85,23 @@
             background:tomato;
             color: #fff;
         }
+    
         </style>
     </head>
-    <body bgcolor="black">
-        <button class="b1" type="submit">sub dude</button>
+    <body>
+        <div class="custom-padding">
+            <nav>
+                <div class="logo">{{ username }}</div>
+                <ul class="menu-area">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Profile</a></li>
+                    <li><a href="/login">Logout</a></li>
+                </ul>
+            </nav>
+
+        </div>
+        <button class="b1" type="submit" onclick="window.location.href=''">Lend a Book</button>
+        <button class="b1" type="submit" onclick="window.location.href=''">Read a Book</button>
+        
     </body>
 </html>
