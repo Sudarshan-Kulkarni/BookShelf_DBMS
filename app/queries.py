@@ -28,6 +28,10 @@ def create_db():
 
     cur.execute("CREATE TABLE incomplete_transaction(RID int ,ISBN int(10) ,LID int ,foreign key(ISBN) references books(ISBN));")
 
+
+    # create a trigger later for inserting a transaction into incomplete transaction table.
+
+
     conn.commit()
     conn.close()
 
@@ -64,3 +68,12 @@ def verify_user(email,password):
         conn.close()
         return 0,[]
 
+
+#Updation
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def update_password(User_Data):
+    conn,cur = connect()
+    cur.execute("UPDATE user_info SET password = ? where UID = ?",(User_Data[8],User_Data[0],))
+    conn.commit()
+    conn.close()

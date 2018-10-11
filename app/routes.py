@@ -36,7 +36,11 @@ def check_credentials():
             #print("invalid user")
         else:
             User_Data = data
-            return render_template('user_home.html',user_id = str(data[0]))
+            return render_template('user_home.html',username = User_Data[1])
+
+
+#Signup Page
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @app.route('/signup',methods = ['GET'])
 def signup():
@@ -65,4 +69,36 @@ def get_new_user():
             return render_template('signup.html',msg2 = 'Enter valid phone number')
         else:
             add_user(name,street,city,state,country,contact_no,email,password) 
-            return render_template('home.html')    
+            return render_template('login.html')    
+
+#Lending and Reading Section Pages
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+@app.route('/lending_section',methods = ['GET','POST'])
+def lend_book():
+    return render_template('lending_section.html',username = User_Data[1])
+
+@app.route('/reading_section',methods = ['GET','POST'])
+def read_book():
+    return render_template('reading_section.html',username = User_Data[1])
+
+
+
+@app.route('/user_profile',methods = ['GET','POST'])
+def display_profile():
+    return render_template('/user_profile.html',username = User_Data[1])
+
+@app.route('/change_password',methods = ['GET','POST'])
+def change_password():
+    old_password = request.form['old_password']
+    new_password = request.form['new_password']
+    confirm_password = request.form['confirm_password']
+    if old_password==new_password:
+        return render_template('change_password.html',msg1 = 'Enter a new password')
+    elif: confirm_password!=new_password:
+        return render_template('change_password.html',msg2 = 'Passwords don\'t match')
+    else:
+        update_password(User_Data)
+        return render_template('user_profile.html',msg3 = 'Password successfully updated')
+    
+
