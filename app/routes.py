@@ -68,8 +68,12 @@ def get_new_user():
         if(len(contact_no)!=10 or not(contact_no.isnumeric())):
             return render_template('signup.html',msg2 = 'Enter valid phone number')
         else:
-            add_user(name,street,city,state,country,contact_no,email,password) 
-            return render_template('login.html')    
+            flag = add_user(name,street,city,state,country,contact_no,email,password)
+
+            if flag==0:
+                return render_template('signup.html',msg2 = 'Email is already registered')
+            elif flag==1: 
+                return render_template('login.html',msg1 = "Registration Successful!")    
 
 #Lending and Reading Section Pages
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -93,12 +97,17 @@ def change_password():
     old_password = request.form['old_password']
     new_password = request.form['new_password']
     confirm_password = request.form['confirm_password']
-    if old_password==new_password:
-        return render_template('change_password.html',msg1 = 'Enter a new password')
-    elif: confirm_password!=new_password:
-        return render_template('change_password.html',msg2 = 'Passwords don\'t match')
+
+    #checking if the old password entered is right
+    if old_password==User_Data[8]:
+        if old_password==new_password:
+            return render_template('change_password.html',msg1 = 'Enter a new password')
+        elif confirm_password!=new_password:
+            return render_template('change_password.html',msg2 = 'Passwords don\'t match')
+        else:
+            update_password(User_Data)
+            return render_template('user_profile.html',msg3 = 'Password successfully updated')
     else:
-        update_password(User_Data)
-        return render_template('user_profile.html',msg3 = 'Password successfully updated')
+        return render_template('user_profile.html',msg4= 'Wrong password')
     
 

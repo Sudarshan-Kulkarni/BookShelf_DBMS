@@ -17,7 +17,12 @@ def create_db():
     cur.execute("INSERT INTO user_info values(null,'Sasuke','Indiranagar','Bangalore','Karnataka','India',8867352489,'sasuke@gmail.com','sas123');")
 
     cur.execute("CREATE TABLE lending_section(LID int ,ISBN int(10) ,book_name varchar(40) ,author varchar(50) ,av int(1) ,RID int ,foreign key(ISBN) references books(ISBN));")
-    
+    """
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    Gotta take care of the book_namees and authors so as to perform joins!!!!!!!!!!!!!
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    """
     cur.execute("CREATE TABLE reading_section(RID int ,ISBN int(10) ,book_name varchar(40) ,author varchar(50) ,due_date date, ex_count int default 0 ,LID int ,foreign key(ISBN) references books(ISBN));")
 
     cur.execute("CREATE TABLE books(ISBN int(10) ,book_name varchar(40) ,author varchar(50));")
