@@ -36,8 +36,12 @@ def check_credentials():
             return render_template('login.html',msg = "Incorrect email or password")
             #print("invalid user")
         else:
-            User_Data = data
+            User_Data = list(data)
             return render_template('user_home.html',username = User_Data[1])
+
+@app.route('/user_home')
+def user_home_page():
+    return render_template('user_home.html',username = User_Data[1])
 
 
 #Signup Page
@@ -81,7 +85,12 @@ def get_new_user():
 
 @app.route('/lending_section',methods = ['GET','POST'])
 def lend_book():
-    return render_template('lending_section.html',username = User_Data[1])
+    lent_books = get_lent_books(User_Data)
+    return render_template('lending_section.html',name = User_Data[1],lent_books = lent_books)
+
+@app.route('/lend_another_book',methods = ['GET','POST'])
+def lend_another_book():
+    return render_template('lend_another_book.html')
 
 @app.route('/reading_section',methods = ['GET','POST'])
 def read_book():
@@ -112,6 +121,7 @@ def change_password():
             return render_template('change_password.html',msg1 = 'Passwords don\'t match')
         else:
             update_password(User_Data,new_password)
+            User_Data[8] = new_password
             return render_template('user_profile.html',username = User_Data[1],email=User_Data[7],street=User_Data[2],city=User_Data[3],state=User_Data[4],country=User_Data[5],contact_number=User_Data[6],msg = "Password updated succesfully")
             #return render_template('user_home.html',username = User_Data[1])
     else:

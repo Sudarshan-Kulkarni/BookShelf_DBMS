@@ -1,9 +1,28 @@
 <html>
     <head>
-        <title>Hello</title>
+        <title>Lending Section</title>
+        <style type = "text/css">
+            *
+            {
+                background-color: brown;
+            }
+        </style>
     </head>
     <body>
-        <h1>This is your lending section {{username}}</h1>
+        <h1>{{ name }}'s Books<h1><br>
+        {% if lent_books %}
+            {% for book in lent_books %}
+                {% for detail in book %}
+                    {{ detail }},
+                {% endfor %}
+                <br>
+            {% endfor %}
+        {% endif %}
+
+        <form id='form' action = '/lend_another_book' method = 'POST'>
+            <button type = 'submit'>Lend another book</button>
+        </form>
+
     </body>
 
 </html>
