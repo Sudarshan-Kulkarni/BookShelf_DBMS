@@ -77,8 +77,14 @@ def verify_user(email,password):
 #Updation
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def update_password(User_Data):
+def update_password(User_Data,new_password):
     conn,cur = connect()
-    cur.execute("UPDATE user_info SET password = ? where UID = ?",(User_Data[8],User_Data[0],))
+    cur.execute("UPDATE user_info SET password = ? where UID = ?",(new_password,User_Data[0],))
     conn.commit()
+
+    """changed from here
+    cur.execute("SELECT * FROM user_info where UID = ? and password = ?;",[User_data[0],new_password])
+    data = cur.fetchone()
+    """
     conn.close()
+    #eturn data
