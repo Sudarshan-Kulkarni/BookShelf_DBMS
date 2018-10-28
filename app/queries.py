@@ -14,9 +14,9 @@ def create_db():
     
     #cur.execute("DROP TABLE user_info;")
     #cur.execute("DROP TABLE lending_section;") 
-    # cur.execute("DROP TABLE reading_section;") 
+    #cur.execute("DROP TABLE reading_section;") 
     #cur.execute("DROP TABLE books")
-    # cur.execute("DROP TABLE incomplete_transaction;")
+    #cur.execute("DROP TABLE incomplete_transaction;")
     
 
     cur.execute("CREATE TABLE user_info(UID integer primary key autoincrement,name varchar(50) ,street varchar(30) ,city varchar(20) ,state varchar(20) ,country varchar(20) ,contact_no int(10) ,email varchar(50),password varchar(20));")
@@ -33,11 +33,11 @@ def create_db():
     """
     cur.execute("CREATE TABLE reading_section(RID int ,ISBN int(10) , due_date date, extn_count int default 0 ,LID int ,foreign key(ISBN) references books(ISBN));")
 
-    cur.execute("CREATE TABLE books(ISBN int(10) ,book_name varchar(40) ,author varchar(50));")
-    cur.execute("INSERT INTO books values(1000000000,'Data Communications and Networking' ,'Forouzan');")
-    cur.execute("INSERT INTO books values(1000000001,'System Software' ,'Leland L. Beck');")
-    cur.execute("INSERT INTO books values(1000000002,'The Database Book' ,'Narain Gehani');")
-    cur.execute("INSERT INTO books values(1000000003,'Modern Operating Systems' ,'Andrew S. Tanenbaum');")
+    cur.execute("CREATE TABLE books(ISBN int(10) ,book_name varchar(40) ,author varchar(50) ,popularity int DEFAULT 0);")
+    cur.execute("INSERT INTO books values(1000000000,'Data Communications and Networking' ,'Forouzan',null);")
+    cur.execute("INSERT INTO books values(1000000001,'System Software' ,'Leland L. Beck',null);")
+    cur.execute("INSERT INTO books values(1000000002,'The Database Book' ,'Narain Gehani',null);")
+    cur.execute("INSERT INTO books values(1000000003,'Modern Operating Systems' ,'Andrew S. Tanenbaum',null);")
 
     cur.execute("CREATE TABLE incomplete_transaction(RID int ,ISBN int(10) ,LID int ,foreign key(ISBN) references books(ISBN));")
 
@@ -95,13 +95,13 @@ def update_password(User_Data,new_password):
     data = cur.fetchone()
     """
     conn.close()
-    #eturn data
+    #return data
 
 #Joins
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 def get_lent_books(User_Data):
     conn,cur = connect()
-    cur.execute("SELECT * FROM lending_section NATURAL JOIN books where LID = ? ;",(User_Data[0],))
+    cur.execute("SELECT ISBN,book_name,author,av,name,email,contact_no FROM lending_section NATURAL JOIN books JOIN user_info ON lending_section.RID = user_info.UID where LID = ?;",(User_Data[0],))
     lent_books = cur.fetchall()
     print(lent_books)
-    return lent_books
+    return list(lent_books)
