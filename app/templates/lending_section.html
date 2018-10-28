@@ -6,17 +6,81 @@
             {
                 background-color: brown;
             }
+
+            table, th, td 
+            {
+                border: 1px solid black;
+                border-collapse: collapse;
+            }
+
+            th
+            {
+                text-align:center;
+            }
+
+            table.a 
+            {
+                table-layout: auto;
+                width:75%;    
+            }
+
+            .b
+            {
+                width:25%;
+            }
+
+            .c
+            {
+                width:8%;
+            }   
+
+            .rc
+            {
+                width:13%;
+            }
+
+            .aa
+            {
+                width:10%;
+            }
         </style>
     </head>
     <body>
         <h1>{{ name }}'s Books<h1><br>
         {% if lent_books %}
-            {% for book in lent_books %}
-                {% for detail in book %}
-                    {{ detail }},
+            <table  class="a">
+                <tr>
+                <th class="c">ISBN</th>
+                <th class="b">Title</th> 
+                <th>Author</th>
+                <th class="aa">Availability</th>
+                <th>Receiver Name</th>
+                <th>Receiver Email</th>
+                <th class="rc">Reciever Contact</th>
+                </tr>
+                {% for book in lent_books %}
+                    <tr>
+                    {% for i in range(len(book)) %}
+                        {%if i==3%}
+                            {%if book[i]==0%}
+                                <td>Not Lent</td>
+                                <td>--</td>
+                                <td>--</td>
+                                <td>--</td>
+                                {%break%}
+                            {%else%}
+                                <td>Lent</td>
+                                {%continue%}
+                            {%endif%}
+                        {%else%}
+                            <td>{%book[i]%}</td>
+                        {%endif%}
+                    {% endfor %}
+                    </tr>
                 {% endfor %}
-                <br>
-            {% endfor %}
+            </table>
+        {%else%}
+            <h3>You have not uploaded information of any book.</h3>
         {% endif %}
 
         <form id='form' action = '/lend_another_book' method = 'POST'>
