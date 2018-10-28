@@ -60,21 +60,8 @@
                 </tr>
                 {% for book in lent_books %}
                     <tr>
-                    {% for i in range(len(book)) %}
-                        {%if i==3%}
-                            {%if book[i]==0%}
-                                <td>Not Lent</td>
-                                <td>--</td>
-                                <td>--</td>
-                                <td>--</td>
-                                {%break%}
-                            {%else%}
-                                <td>Lent</td>
-                                {%continue%}
-                            {%endif%}
-                        {%else%}
-                            <td>{%book[i]%}</td>
-                        {%endif%}
+                    {% for details in book%}
+                        <td>{{details}}</td>
                     {% endfor %}
                     </tr>
                 {% endfor %}

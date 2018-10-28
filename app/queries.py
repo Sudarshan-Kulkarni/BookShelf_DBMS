@@ -103,5 +103,16 @@ def get_lent_books(User_Data):
     conn,cur = connect()
     cur.execute("SELECT ISBN,book_name,author,av,name,email,contact_no FROM lending_section NATURAL JOIN books JOIN user_info ON lending_section.RID = user_info.UID where LID = ?;",(User_Data[0],))
     lent_books = cur.fetchall()
+    lent_books = list(lent_books)
     print(lent_books)
-    return list(lent_books)
+    for book in lent_books:
+        for i in book:
+            if i==3:
+                if book[i]==0:
+                    book[i] = 'Lent'
+                    book[i+1] = '--'
+                    book[i+2] = '--'
+                    break
+                else:
+                    book[i] = 'Not Lent' 
+    return lent_books
