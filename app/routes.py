@@ -92,6 +92,25 @@ def lend_book():
 def lend_another_book():
     return render_template('lend_another_book.html')
 
+@app.route('/verify_book', methods = ['GET','POST'])
+def verify_the_book():
+    if request.method=='POST':
+        isbn = request.form['isbn']
+        book_name = request.form['book_name']
+        print("isbn"+isbn)
+
+        if (isbn=="" or not isbn.isnumeric()) and book=="":
+            render_template('lend_another_book.html',warning_msg="Please enter book details!")
+        else:
+            flag,data = verify_book_details(isbn,book_name)
+
+            if flag==True:
+                #show him the book details!
+            else:
+                render_template('lend_another_book.html',warning_msg=flag)
+
+                
+
 @app.route('/reading_section',methods = ['GET','POST'])
 def read_book():
     return render_template('reading_section.html',username = User_Data[1])

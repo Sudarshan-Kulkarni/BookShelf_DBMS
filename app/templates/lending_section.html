@@ -45,35 +45,33 @@
             }
         </style>
     </head>
-    <body>
-        <h1>{{ name }}'s Books<h1><br>
-        {% if lent_books %}
-            <table  class="a">
-                <tr>
-                <th class="c">ISBN</th>
-                <th class="b">Title</th> 
-                <th>Author</th>
-                <th class="aa">Availability</th>
-                <th>Receiver Name</th>
-                <th>Receiver Email</th>
-                <th class="rc">Reciever Contact</th>
-                </tr>
-                {% for book in lent_books %}
+        <body>
+            <h1>{{ name }}'s Books<h1><br>
+            {% if lent_books %}
+                <table  class="a">
                     <tr>
-                    {% for details in book%}
-                        <td>{{details}}</td>
-                    {% endfor %}
+                    <th class="c">ISBN</th>
+                    <th class="b">Title</th> 
+                    <th>Author</th>
+                    <th class="aa">Availability</th>
+                    <th>Receiver Name</th>
+                    <th>Receiver Email</th>
+                    <th class="rc">Reciever Contact</th>
                     </tr>
-                {% endfor %}
-            </table>
-        {%else%}
-            <h3>You have not uploaded information of any book.</h3>
-        {% endif %}
-
-        <form id='form' action = '/lend_another_book' method = 'POST'>
-            <button type = 'submit'>Lend another book</button>
-        </form>
-
-    </body>
-
+                    {% for book in lent_books %}
+                        <tr>
+                        {% for details in book%}
+                            <td style="text-align:center">{{details}}</td>
+                        {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </table>
+            {%else%}
+                <h3>You have not uploaded information of any book.</h3>
+            {% endif %}
+            <br>
+            <form id='form' action = '/lend_another_book' method = 'POST'>
+                <button type = 'submit'>Lend another book</button>
+            </form>
+        </body>
 </html>

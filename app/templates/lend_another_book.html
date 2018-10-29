@@ -5,6 +5,15 @@
         </title>
     </head>
     <body>
-        <h1>Lend a new book here</h1>
+        <h1>Add a new book to lend here!</h1>
+        <form id="f1" action="/verify_book" method="POST">
+            <p>ISBN</p>
+            <input type="text" name="isbn" placeholder="12345" style="height: 25px; width: 100px;">
+            <br><br>
+            <p>Don't have the ISBN?Enter the Book name instead</p>
+            <p>Book Name</p>
+            <input type="text" name="book_name" placeholder="abc fantasy" style="height: 25px; width: 200px;">
+            <button type="submit" style='margin-right:16px'style="height: 25px">Add Book</button>
+        </form>
     </body>
 </html>
