@@ -3,10 +3,32 @@
         <title>
             Lend a new book here
         </title>
+        <style type="text/css">
+        table, th, td 
+            {
+                border: 1px solid black;
+                border-collapse: collapse;
+            }
+        table.a 
+            {
+                table-layout: auto;
+                width:75%;    
+            }
+
+            .b
+            {
+                width:20%;
+            }
+
+            .c
+            {
+                width:8%;
+            }
+        </style>
     </head>
     <body>
         <h1>Add a new book to lend here!</h1>
-        <form id="f1" action="/verify_book" method="POST">
+        <form id='form' action='/verify_book' method='POST'>
             <p>ISBN</p>
             <input type="text" name="isbn" placeholder="12345" style="height: 25px; width: 100px;">
             <br><br>
@@ -14,6 +36,27 @@
             <p>Book Name</p>
             <input type="text" name="book_name" placeholder="abc fantasy" style="height: 25px; width: 200px;">
             <button type="submit" style='margin-right:16px'style="height: 25px">Add Book</button>
+            {% if warning_msg %}
+                <br>
+                <small style = "color:red;">{{ warning_msg }}</small>
+            {% endif %}
         </form>
+        {%if right_msg%}
+            <br><br>
+            <p>Confirm book deatils</p>
+            <table  class="a">
+                <tr>
+                <th class="c">ISBN</th>
+                <th class="b">Title</th> 
+                <th class="b">Author</th>
+                </tr>
+                <tr>
+                {% for detail in right_msg %}
+                    <td style="text-align:center">{{detail}}</td>
+                {% endfor %}
+                </tr>
+            </table>
+            <button type="submit" onclick="window.location.href='/lending_section'" style="height: 25px">Confirm</button>
+        {%endif%}
     </body>
 </html>

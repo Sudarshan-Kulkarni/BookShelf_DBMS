@@ -67,28 +67,40 @@ def add_user(name,street,city,state,country,contact_no,email,password):
         return 1        
 
 def verify_book_details(isbn,bname):
-
+    conn,cur = connect()
     if (isbn=="" and bname!="") or (not isbn.isnumeric() and bname!=""):
-        cur.execute("SELECT * FROM books where book_name=?;",(bname,))
-        data = cur.fetchall()
+        cur.execute("SELECT * FROM books where book_name=?;",[bname])
+        data = cur.fetchone()
+        conn.close()
         if(data):
+            print(data)
             return True,data
         else:
             return "Book name is incorrect!",None
     elif isbn.isnumeric():
         cur.execute("SELECT * FROM books where ISBN=?;",(isbn,))
-        data = cur.fetchall()
-        conn.close()
+        data = cur.fetchone()
         if(data):
+            print(data)
+            conn.close()
             return True,data
         else:
-            cur.execute("SELECT * FROM books where book_name=?;",(bname,))
-            data = cur.fetchall()
+            cur.execute("SELECT * FROM books where book_name=?;",[bname])
+            data = cur.fetchone()
             if(data):
+                print(data)
+                conn.close()
                 return True,data
             else:
+                conn.close()
                 return "Enter valid details!",None
 
+def add_new_book(new_book_isbn,User_Data):
+    conn,cur = connect()
+    cur.execute("INSERT INTO lending_section VALUES (?,?,1,null);",(User_Data[0],new_book_isbn,))
+    conn.commit()
+    conn.close()
+    
 
 #Selection
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -8,6 +8,7 @@ app.config['SECRET_KEY'] = "YOU-WILL-NEVER-GUESS-THIS"
 #create_db()
 
 User_Data = None
+New_Book_Data = None
 #0:UID , 1:name , 2:street , 3: city , 4:state , 5:country , 6:contact_no , 7:email , 8:password
 
 # @app.route('/home')
@@ -84,6 +85,13 @@ def get_new_user():
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @app.route('/lending_section',methods = ['GET','POST'])
+def add_book():
+    global New_Book_Data
+    if New_Book_Data!=None:
+        add_new_book(New_Book_Data[0],User_Data)
+        New_Book_Data = None
+    return lend_book()
+
 def lend_book():
     lent_books = get_lent_books(User_Data)
     return render_template('lending_section.html',name = User_Data[1],lent_books = lent_books)
@@ -94,22 +102,30 @@ def lend_another_book():
 
 @app.route('/verify_book', methods = ['GET','POST'])
 def verify_the_book():
+    global New_Book_Data
     if request.method=='POST':
         isbn = request.form['isbn']
         book_name = request.form['book_name']
-        print("isbn"+isbn)
+        print(type(isbn))
 
-        if (isbn=="" or not isbn.isnumeric()) and book=="":
-            render_template('lend_another_book.html',warning_msg="Please enter book details!")
+        if (isbn=="" or not str(isbn).isnumeric()) and book_name=="":
+            return render_template('lend_another_book.html',warning_msg="Please enter book details!")
         else:
             flag,data = verify_book_details(isbn,book_name)
-
+            print(flag)
             if flag==True:
-                #show him the book details!
+                print("HI-BYE")
+                #for i in range(len(data)):
+                #      data[i] = list(data[i])
+                #    del data[i][3]
+                data = list(data)
+                del data[3]
+                New_Book_Data = data
+                print(data)
+                return render_template('lend_another_book.html',right_msg=data)
             else:
-                render_template('lend_another_book.html',warning_msg=flag)
+                return render_template('lend_another_book.html',warning_msg=flag)
 
-                
 
 @app.route('/reading_section',methods = ['GET','POST'])
 def read_book():
