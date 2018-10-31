@@ -127,6 +127,12 @@ def verify_the_book():
                 return render_template('lend_another_book.html',warning_msg=flag)
 
 
+
+@app.route('/remove_lent_book')
+
+def ask_which_book():
+    return render_template('remove_lent_book.html')
+
 @app.route('/reading_section',methods = ['GET','POST'])
 def read_book():
     return render_template('reading_section.html',username = User_Data[1])

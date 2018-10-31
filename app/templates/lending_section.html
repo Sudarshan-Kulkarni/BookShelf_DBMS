@@ -4,7 +4,12 @@
         <style type = "text/css">
             *
             {
-                background-color: brown;
+                margin:0;
+                padding:0;
+                -webkit-box-sizing: border-box;
+                -moz-box-sizing: border-box;
+                box-sizing: border-box;
+                font-family: Palatino, "Palatino LT STD", "Palatino Linotype", "Book Antiqua", Georgia, serif;
             }
 
             table, th, td 
@@ -21,7 +26,9 @@
             table.a 
             {
                 table-layout: auto;
-                width:75%;    
+                width:75%; 
+                margin-left: 30px;
+
             }
 
             .b
@@ -43,10 +50,86 @@
             {
                 width:10%;
             }
+            
+            body
+            {
+                -webkit-background-size:cover;
+                background-position:center center;
+                height:100vh;
+                background:#fff
+                background-size:cover;
+
+            }
+            .menu-area li a
+            {
+                text-decoration:none;
+                color:#fff;
+                letter-spacing:1px;
+                text-transform: uppercase;
+                display:block;
+                padding:0 25px;
+                font-size:17px;
+                line-height:30px;
+                position: relative;
+                z-index: 1;
+            }
+            .menu-area li
+            {
+                list-style:none;
+                display:inline-block;
+            }
+            .custom-padding
+            {
+                padding-top:25px; 
+            }
+            nav
+            {
+                position:relative;
+                padding:10px 20px 10px 10px;
+                text-align:right;
+                z-index:1;
+                background:#333;
+                margin:0 auto;
+                width:calc(100% -60px);
+            }
+            .logo
+            {
+                width:30%;
+                float:left;
+                text-transform:uppercase;
+                color:#fff;
+                font-size:22px;
+                text-align:left;
+                padding-left:2%;
+            }
+            .menu-area li a:hover
+            {
+                background:tomato;
+                color:#fff;
+            }
+
+            .buttons
+            {
+                margin-left: 30px;
+            }
+
+
+
         </style>
     </head>
         <body>
-            <h1>{{ name }}'s Books<h1><br>
+                <div class="custom-padding">
+                        <nav>
+                            <div class="logo">Lending Section</div>
+                            <ul class="menu-area">
+                                <li><a href="/user_home">Home</a></li>
+                                <li><a href="/user_profile">Profile</a></li>
+                                <li><a href="/login">Logout</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <br>
+            <h1 style = "margin-left: 30px">{{ name }}'s Books<h1><br>
             {% if lent_books %}
                 <table  class="a">
                     <tr>
@@ -70,8 +153,11 @@
                 <h3>You have not uploaded information of any book.</h3>
             {% endif %}
             <br>
-            <form id='form' action = '/lend_another_book' method = 'POST'>
-                <button type = 'submit'>Lend another book</button>
-            </form>
+            <div class = "buttons">
+                <button type = 'submit' onclick="window.location.href = '/lend_another_book'">Lend another book</button>
+                <button type = 'submit' onclick="window.location.href = '/remove_lent_book'">Remove a book</button>
+            </div>
+
+
         </body>
 </html>
