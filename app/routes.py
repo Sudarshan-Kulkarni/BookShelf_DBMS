@@ -132,7 +132,7 @@ def verify_the_book():
 
 
 
-@app.route('/remove_lent_book')
+@app.route('/remove_lent_book', methods = ['POST','GET'])
 
 def remove_old_book():
     if request.method=='POST':

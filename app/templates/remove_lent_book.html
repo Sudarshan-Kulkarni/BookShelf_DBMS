@@ -80,23 +80,34 @@
                 text-align:center;
             }
 
+            td
+            {
+                text-align:center;
+            }
+
             table.a 
             {
                 table-layout: auto;
-                width:75%; 
+                width:60%; 
                 margin-left: 30px;
 
             }
 
             .b
             {
-                width:25%;
+                width:40%;
             }
 
             .c
             {
                 width:8%;
             }
+
+            .aut
+            {
+                width:30%;
+            }
+
 
         </style>
     </head>
@@ -119,7 +130,8 @@
                 <tr>
                 <th class="c">ISBN</th>
                 <th class="b">Title</th> 
-                <th>Author</th>
+                <th class = "aut">Author</th>
+                <th class = "aut">Remove</th>
                 </tr>
                 {% for book in removable_books %}
                     {% set id = book[0] %}
