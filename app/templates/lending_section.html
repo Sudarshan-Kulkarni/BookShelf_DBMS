@@ -139,11 +139,11 @@
                     <th class="aa">Availability</th>
                     <th>Receiver Name</th>
                     <th>Receiver Email</th>
-                    <th class="rc">Reciever Contact</th>
+                    <th class="rc">Receiver Contact</th>
                     </tr>
                     {% for book in lent_books %}
                         <tr>
-                        {% for details in book%}
+                        {% for details in book[1:]%}
                             <td style="text-align:center">{{details}}</td>
                         {% endfor %}
                         </tr>

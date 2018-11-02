@@ -109,35 +109,37 @@
                 <br>
 
         <h1 style="margin-left:30px">Add a new book to lend here!</h1>
-        <form id='form' action='/verify_book' method='POST' style="margin-left:30px">
+        <form id='form' method='POST' style="margin-left:30px">
             <p>ISBN</p>
             <input type="text" name="isbn" placeholder="12345" style="height: 25px; width: 100px;">
             <br><br>
             <p>Don't have the ISBN?Enter the Book name instead</p>
             <p>Book Name</p>
             <input type="text" name="book_name" placeholder="abc fantasy" style="height: 25px; width: 200px;">
-            <button type="submit" style='margin-right:16px'style="height: 25px">Add Book</button>
+            <button name = "confirm" type="submit" onclick="javascript: form.action='/verify_book'" style='margin-right:16px'style="height: 25px">Add Book</button>
             {% if warning_msg %}
                 <br>
                 <small style = "color:red;">{{ warning_msg }}</small>
             {% endif %}
+        
+            {%if right_msg%}
+                <br><br>
+                <p>Confirm book details</p>
+                <table  class="a">
+                    <tr>
+                    <th class="c">ISBN</th>
+                    <th class="b">Title</th> 
+                    <th class="b">Author</th>
+                    </tr>
+                    <tr>
+                    {% for detail in right_msg %}
+                        <td style="text-align:center">{{detail}}</td>
+                    {% endfor %}
+                    </tr>
+                </table>          
+                <button type="submit" onclick="javascript: form.action='/lending_section'" value = {{book}} style="height: 25px" name = 'confirm'>Confirm</button>
+            
+            {%endif%}
         </form>
-        {%if right_msg%}
-            <br><br>
-            <p>Confirm book deatils</p>
-            <table  class="a">
-                <tr>
-                <th class="c">ISBN</th>
-                <th class="b">Title</th> 
-                <th class="b">Author</th>
-                </tr>
-                <tr>
-                {% for detail in right_msg %}
-                    <td style="text-align:center">{{detail}}</td>
-                {% endfor %}
-                </tr>
-            </table>
-            <button type="submit" onclick="window.location.href='/lending_section'" style="height: 25px">Confirm</button>
-        {%endif%}
     </body>
 </html>

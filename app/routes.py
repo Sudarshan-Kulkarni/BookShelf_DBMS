@@ -87,9 +87,13 @@ def get_new_user():
 @app.route('/lending_section',methods = ['GET','POST'])
 def add_book():
     global New_Book_Data
-    if New_Book_Data!=None:
-        add_new_book(New_Book_Data[0],User_Data)
+
+    if request.method =='POST':
+        New_Book_Data = request.form['confirm']
+        print(New_Book_Data)
+        add_new_book(New_Book_Data,User_Data)
         New_Book_Data = None
+
     return lend_book()
 
 def lend_book():
@@ -120,9 +124,9 @@ def verify_the_book():
                 #    del data[i][3]
                 data = list(data)
                 del data[3]
-                New_Book_Data = data
+                #New_Book_Data = data
                 print(data)
-                return render_template('lend_another_book.html',right_msg=data)
+                return render_template('lend_another_book.html',right_msg=data,book = data[0])
             else:
                 return render_template('lend_another_book.html',warning_msg=flag)
 
@@ -130,12 +134,24 @@ def verify_the_book():
 
 @app.route('/remove_lent_book')
 
+def remove_old_book():
+    if request.method=='POST':
+        print(request.form)
+    return ask_which_book()
 def ask_which_book():
-    return render_template('remove_lent_book.html')
+    removable_books = get_removable_books(User_Data)
+    return render_template('remove_lent_book.html',removable_books = removable_books)
+
+@app.route('/remove_the_lent_book', methods = ['POST'])
+def remove_and_redirect():
+    rem_id = request.form['remove']
+    print("rem_id = ",rem_id)
+    delete_removable_book(User_Data,rem_id)
+    return redirect(url_for('remove_old_book'))
 
 @app.route('/reading_section',methods = ['GET','POST'])
 def read_book():
-    return render_template('reading_section.html',username = User_Data[1])
+    return render_template('reading_section.html',op1 = 'naruto',op2 = 'sasuke',username = User_Data[1])
 
 #User Profile Page
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -167,3 +183,9 @@ def change_password():
             #return render_template('user_home.html',username = User_Data[1])
     else:
         return render_template('change_password.html',msg1 = 'Wrong password')
+
+
+# @app.route('/action', methods = ['POST'])
+# def test():
+#     message = request.form['subject'] 
+#     return render_template('reading_section.html',op1 = 'naruto',op2 = 'sasuke',msg = message)
