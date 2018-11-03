@@ -14,7 +14,15 @@
             font-family: Palatino, "Palatino LT STD", "Palatino Linotype", "Book Antiqua", Georgia, serif;
         }
 
-    
+        body
+        {
+            background:url(https://image.freepik.com/free-photo/wooden-board-empty-table-top-on-of-blurred-background-perspective-brown-wood-table-over-blur-in-coffee-shop-background-can-be-used-mock-up-for-montage-products-display-or-design-key-visual-layout_1253-952.jpg)  no-repeat;
+            background-size:100% 100%;
+            width: 100%;
+            height: 100%;
+            max-height: 100%;
+            background-color: rgba(0,0,0,0.5);           
+        }
         
         table, th, td 
             {
@@ -92,6 +100,27 @@
                 background:tomato;
                 color:#fff;
             }
+            p
+            {
+                font-size: 20px;
+            }
+            .b1
+            {
+                
+                width: 150px;
+                height: 35px;
+                border: none;
+                color:whitesmoke;
+                cursor:pointer;
+                border-radius: 5px;
+                background:rgb(0,0,0, 0.6);
+                outline: none;
+            }
+            .b1:hover
+            {
+                background:#ec6f17;
+                color:#fff;
+            }
         </style>
     </head>
     <body>
@@ -108,15 +137,15 @@
                 </div>
                 <br>
 
-        <h1 style="margin-left:30px">Add a new book to lend here!</h1>
+        <h1 style="margin-left:30px">Add a new book to lend here!</h1><br>
         <form id='form' method='POST' style="margin-left:30px">
             <p>ISBN</p>
-            <input type="text" name="isbn" placeholder="12345" style="height: 25px; width: 100px;">
+            <input type="text" name="isbn" placeholder="12345" style="height: 35px; width: 100px;">
             <br><br>
             <p>Don't have the ISBN?Enter the Book name instead</p>
             <p>Book Name</p>
-            <input type="text" name="book_name" placeholder="abc fantasy" style="height: 25px; width: 200px;">
-            <button name = "confirm" type="submit" onclick="javascript: form.action='/verify_book'" style='margin-right:16px'style="height: 25px">Add Book</button>
+            <input type="text" name="book_name" placeholder="abc fantasy" style="height: 35px; width: 200px;" >
+            <button name = "confirm" type="submit" onclick="javascript: form.action='/verify_book'" style="margin-left: 25px;" class="b1">Add Book</button>
             {% if warning_msg %}
                 <br>
                 <small style = "color:red;">{{ warning_msg }}</small>
@@ -136,8 +165,9 @@
                         <td style="text-align:center">{{detail}}</td>
                     {% endfor %}
                     </tr>
-                </table>          
-                <button type="submit" onclick="javascript: form.action='/lending_section'" value = {{book}} style="height: 25px" name = 'confirm'>Confirm</button>
+                </table>
+                <br>          
+                <button type="submit" onclick="javascript: form.action='/lending_section'" value = {{book}} name = 'confirm' class="b1">Confirm</button>
             
             {%endif%}
         </form>
