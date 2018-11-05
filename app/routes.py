@@ -5,7 +5,7 @@ app.config['SECRET_KEY'] = "YOU-WILL-NEVER-GUESS-THIS"
 
 
 #To create the database for the first time
-#create_db()
+create_db()
 
 User_Data = None
 New_Book_Data = None
@@ -151,7 +151,18 @@ def remove_and_redirect():
 
 @app.route('/reading_section',methods = ['GET','POST'])
 def read_book():
-    return render_template('reading_section.html',op1 = 'naruto',op2 = 'sasuke',username = User_Data[1])
+    all_read_books = get_all_reads(User_Data)
+    prev_reads = []
+    current_reads = []
+    for book in all_read_books:
+        if book[9] == 1:
+            prev_reads.append(book)
+        else:
+            current_reads.append(book)
+    
+    print (all_read_books)
+    
+    return render_template('reading_section.html',username = User_Data[1],prev_reads = prev_reads,current_reads = current_reads)
 
 #User Profile Page
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------

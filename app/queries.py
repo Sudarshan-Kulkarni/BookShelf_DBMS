@@ -23,11 +23,11 @@ def create_db():
     cur.execute("INSERT INTO user_info values(101,'Naruto','Ashokapuram','Mysuru','Karnataka','India',9016387328,'naruto@gmail.com','nar123');")
     cur.execute("INSERT INTO user_info values(null,'Sasuke','Indiranagar','Bangalore','Karnataka','India',8867352489,'sasuke@gmail.com','sas123');")
 
-    cur.execute("CREATE TABLE lending_section(ID integer primary key autoincrement, LID integer ,ISBN int(5) ,av int(1) ,RID integer ,foreign key(ISBN) references books(ISBN));")
-    cur.execute("INSERT INTO lending_section values(100 ,101 ,10000 ,1 , null);")
+    cur.execute("CREATE TABLE lending_section(ID integer primary key autoincrement, LID integer ,ISBN int(5) ,av int(1) ,RID integer ,lent_date date ,due_date date ,foreign key(ISBN) references books(ISBN));")
+    cur.execute("INSERT INTO lending_section values(100 ,101 ,10000 ,1 ,102 ,'2018-05-07' ,'2018-05-21');")
 
     cur.execute("CREATE TABLE reading_section(ID integer primary key autoincrement, RID integer ,ISBN int(5) , due_date date, extn_count int default 0 ,LID integer ,read_status integer ,foreign key(ISBN) references books(ISBN));")
-
+    cur.execute("INSERT INTO reading_section values(100 ,102 ,10000 ,'2018-05-21' ,0 ,101 ,0);")
     cur.execute("CREATE TABLE books(ISBN int(5) ,book_name varchar(40) ,author varchar(50) ,popularity int DEFAULT 0);")
     cur.execute("INSERT INTO books values(10000,'Data Communications and Networking' ,'Forouzan',null);")
     cur.execute("INSERT INTO books values(10001,'System Software' ,'Leland L. Beck',null);")
@@ -171,9 +171,9 @@ def delete_removable_book(User_Data,rem_id):
     conn.commit()
     conn.close()
 
-def get_current_reads(User_Data):
+def get_all_reads(User_Data):
     conn,cur = connect()
-    cur.execute("SELECT R.ISBN,B.book_name,B.author,U.name,U.contact_no,R.due_date,R.extn_count FROM reading_section R JOIN books B ON R.ISBN = B.ISBN JOIN user_info U ON  WHERE UID = ?",(User_Data[0],))
-    current_reads = cur.fetchall()
+    cur.execute("SELECT R.ID,R.ISBN,B.book_name,B.author,U.name,U.email,U.contact_no,R.due_date,R.extn_count,R.read_status FROM reading_section R JOIN books B ON R.ISBN = B.ISBN JOIN user_info U ON R.LID = U.UID WHERE R.RID = ?",(User_Data[0],))
+    all_reads = cur.fetchall()
     conn.close()
-    return current_reads
+    return all_reads
