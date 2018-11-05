@@ -1,0 +1,77 @@
+<html>
+    <head>
+        <title>Reading section</title>
+        <style type="text/css">
+            table, th, td 
+            {
+                border: 1px solid black;
+                border-collapse: collapse;
+            }
+
+            th
+            {
+                text-align:center;
+            }
+            table.a 
+            {
+                table-layout: auto;
+                width:75%; 
+                margin-left: 30px;
+                font-size: 20px;
+
+            }
+
+            .b
+            {
+                width:25%;
+                font-size: 20px;
+            }
+
+            .c
+            {
+                width:10%;
+                font-size: 20px;
+            }   
+
+            .rc
+            {
+                width:13%;
+                font-size: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Your current Reads</h1>
+        <table class="a">
+        {% if current_reads %}
+            <tr>
+                <th class="c">ISBN</th>
+                <th class="b">Title</th>
+                <th>Author</th>
+                <th>Lender Name</th>
+                <th>Lender email</th>
+                <th class="rc">Lender Contact</th>
+            </tr>
+            {% for books in current_reads %}
+                <tr>
+                    {% for details in books[1:] %}
+                    <td style="text-align:center">{{details}}</td>
+                    {% end for %}
+                </tr>
+            {% end for %}
+        </table>
+        {% else %}
+            <h3>You have no active reads</h3>
+        {% end if %}
+        <br><br><br><br>
+        <h1>Previous Reads</h1>
+        <table class="a">
+                <tr>
+                        <th class="c">ISBN</th>
+                        <th class="b">Title</th>
+                        <th>Author</th>
+                </tr>
+        </table>
+    </body>
+
+</html>

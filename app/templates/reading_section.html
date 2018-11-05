@@ -100,28 +100,57 @@
                 width:10%;
                 font-size: 20px;
             }
+            .d
+            {
+                width:25%;
+                font-size: 20px;
+            }
 
         </style>
     </head>
     <body>
-            <div class="custom-padding">
-                    <nav>
-                        <div class="logo">Reading Section</div>
-                        <ul class="menu-area">
-                            <li><a href="/user_home">Home</a></li>
-                            <li><a href="/user_profile">Profile</a></li>
-                            <li><a href="/login">Logout</a></li>
-                        </ul>
-                    </nav>
-                </div>
-        <h1>This is your reading section {{username}}</h1>
-        <form action = '/action' method = 'POST'>
-            <button name="subject" type="submit" value={{op1}}>naruto</button>
-            <button name="subject" type="submit" value={{op2}}>sasuke</button>
-        </form>
-        {%if msg%}
-            <h2>{{msg}}</h2>
+        <div class="custom-padding">
+            <nav>
+                <div class="logo">Reading Section</div>
+                     <ul class="menu-area">
+                        <li><a href="/user_home">Home</a></li>
+                        <li><a href="/user_profile">Profile</a></li>
+                        <li><a href="/login">Logout</a></li>
+                    </ul>
+            </nav>
+        </div>
+        <h1 style = "margin-left: 30px">Your current Reads</h1>
+        <table class="a">
+        {% if current_reads %}
+            <tr>
+                <th class="c">ISBN</th>
+                <th class="b">Title</th>
+                <th>Author</th>
+                <th>Lender Name</th>
+                <th>Lender email</th>
+                <th class="rc">Lender Contact</th>
+            </tr>
+            {% for books in current_reads %}
+                <tr>
+                    {% for details in books[1:] %}
+                    <td style="text-align:center">{{details}}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+            <h3 style = "margin-left: 30px">You have no active reads</h3>
         {% endif %}
+        <br><br><br><br>
+        <h1 style = "margin-left: 30px">Previous Reads</h1>
+        <table class="a">
+                <tr>
+                        <th class="c">ISBN</th>
+                        <th class="b">Title</th>
+                        <th class="d">Author</th>
+                </tr>
+        </table>
+        
     </body>
 
 </html>
