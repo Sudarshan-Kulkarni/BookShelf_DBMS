@@ -132,6 +132,28 @@
                 background:#ec6f17;
                 color:#fff;
             }
+            .b2
+            {
+                width: 150px;
+                border: none;
+                outline: none;
+                height: 50px;
+                color:whitesmoke;
+                font-size:20px;
+                background:rgb(0,0,0, 0.6);/*210, 45, 45,*/
+                cursor:pointer;
+                border-radius: 5px;
+                margin-left: 30px;
+                /* margin-left:321px;
+                margin-top:200px; */
+
+            }
+
+            .b2:hover
+            {
+                background:tomato;
+                color: whitesmoke;
+            }
 
         </style>
     </head>
@@ -208,6 +230,9 @@
         {% else %}
             <h2 style = "margin-left: 30px">You have no previous reads</h2>
         {% endif %}
+        <br>
+        <br>
+        <button class="b2" type="submit" onclick="window.location.href='/read_new_book'">Read New Book</button>
         
     </body>
 
