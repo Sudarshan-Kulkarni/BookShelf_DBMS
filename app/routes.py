@@ -145,24 +145,32 @@ def ask_which_book():
 @app.route('/remove_the_lent_book', methods = ['POST'])
 def remove_and_redirect():
     rem_id = request.form['remove']
-    print("rem_id = ",rem_id)
+    #print("rem_id = ",rem_id)
     delete_removable_book(User_Data,rem_id)
     return redirect(url_for('remove_old_book'))
 
+
 @app.route('/reading_section',methods = ['GET','POST'])
-def read_book():
-    all_read_books = get_all_reads(User_Data)
+def read_book(return_message = ""):
+    all_reads = get_all_reads(User_Data)
     prev_reads = []
     current_reads = []
-    for book in all_read_books:
+    for book in all_reads:
         if book[9] == 1:
             prev_reads.append(book)
         else:
             current_reads.append(book)
     
-    print (all_read_books)
-    
-    return render_template('reading_section.html',username = User_Data[1],prev_reads = prev_reads,current_reads = current_reads)
+    #print (all_reads)
+    print("return message = ",return_message)
+    return render_template('reading_section.html',username = User_Data[1],prev_reads = prev_reads,current_reads = current_reads,return_message = return_message )
+
+@app.route('/return_book', methods = ['POST'])
+def return_and_redirect():
+    tran_id = request.form['return']
+    print("tran_id = ",tran_id)
+    return_the_book(tran_id)
+    return redirect(url_for('read_book',return_message = 'Returned the book successfully'))
 
 #User Profile Page
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------

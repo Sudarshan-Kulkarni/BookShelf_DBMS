@@ -12,31 +12,32 @@ def connect():
 def create_db():
     conn,cur = connect()
     
-    cur.execute("DROP TABLE user_info;")
-    cur.execute("DROP TABLE lending_section;") 
-    cur.execute("DROP TABLE reading_section;") 
-    cur.execute("DROP TABLE books")
-    cur.execute("DROP TABLE incomplete_transaction;")
+    cur.execute("DROP TABLE IF EXISTS user_info;")
+    cur.execute("DROP TABLE IF EXISTS lending_section;") 
+    cur.execute("DROP TABLE IF EXISTS reading_section;") 
+    cur.execute("DROP TABLE IF EXISTS books")
+    cur.execute("DROP TABLE IF EXISTS incomplete_transaction;")
     
 
     cur.execute("CREATE TABLE user_info(UID integer primary key autoincrement,name varchar(50) ,street varchar(30) ,city varchar(20) ,state varchar(20) ,country varchar(20) ,contact_no int(10) ,email varchar(50),password varchar(20));")
     cur.execute("INSERT INTO user_info values(101,'Naruto','Ashokapuram','Mysuru','Karnataka','India',9016387328,'naruto@gmail.com','nar123');")
     cur.execute("INSERT INTO user_info values(null,'Sasuke','Indiranagar','Bangalore','Karnataka','India',8867352489,'sasuke@gmail.com','sas123');")
 
-    cur.execute("CREATE TABLE lending_section(ID integer primary key autoincrement, LID integer ,ISBN int(5) ,av int(1) ,RID integer ,lent_date date ,due_date date ,foreign key(ISBN) references books(ISBN));")
-    cur.execute("INSERT INTO lending_section values(100 ,101 ,10000 ,1 ,102 ,'2018-05-07' ,'2018-05-21');")
+    cur.execute("CREATE TABLE lending_section(ID integer primary key autoincrement, LID integer ,ISBN int(5) ,av int(1) ,RID integer ,lent_date date ,due_date date , transaction_id integer, foreign key(ISBN) references books(ISBN));")
+    cur.execute("INSERT INTO lending_section values(100 ,101 ,10000 ,1 ,102 ,'2018-05-07' ,'2018-05-21',100);")
 
-    cur.execute("CREATE TABLE reading_section(ID integer primary key autoincrement, RID integer ,ISBN int(5) , due_date date, extn_count int default 0 ,LID integer ,read_status integer ,foreign key(ISBN) references books(ISBN));")
-    cur.execute("INSERT INTO reading_section values(100 ,102 ,10000 ,'2018-05-21' ,0 ,101 ,0);")
+    cur.execute("CREATE TABLE reading_section(ID integer primary key autoincrement, RID integer ,ISBN int(5) , due_date date, extn_count int default 0 ,LID integer ,read_status integer , transaction_id integer, foreign key(ISBN) references books(ISBN));")
+    cur.execute("INSERT INTO reading_section values(100 ,102 ,10000 ,'2018-05-21' ,0 ,101 ,0, 100);")
     cur.execute("CREATE TABLE books(ISBN int(5) ,book_name varchar(40) ,author varchar(50) ,popularity int DEFAULT 0);")
     cur.execute("INSERT INTO books values(10000,'Data Communications and Networking' ,'Forouzan',null);")
     cur.execute("INSERT INTO books values(10001,'System Software' ,'Leland L. Beck',null);")
     cur.execute("INSERT INTO books values(10002,'The Database Book' ,'Narain Gehani',null);")
     cur.execute("INSERT INTO books values(10003,'Modern Operating Systems' ,'Andrew S. Tanenbaum',null);")
 
-    cur.execute("CREATE TABLE incomplete_transaction(RID integer ,ISBN int(5) ,LID integer ,foreign key(ISBN) references books(ISBN));")
+    cur.execute("CREATE TABLE incomplete_transaction(transaction_id integer primary key autoincrement, RID integer ,ISBN int(5) ,LID integer ,foreign key(ISBN) references books(ISBN));")
 
 
+    #cur.execute("CREATE TRIGGER ")
     # create a trigger later for inserting a transaction into incomplete transaction table.
 
 
@@ -91,7 +92,7 @@ def verify_book_details(isbn,bname):
 
 def add_new_book(new_book_isbn,User_Data):
     conn,cur = connect()
-    cur.execute("INSERT INTO lending_section VALUES (null,?,?,1,null);",(User_Data[0],new_book_isbn,))
+    cur.execute("INSERT INTO lending_section VALUES (null,?,?,1,null,null,null,null);",(User_Data[0],new_book_isbn,))
     conn.commit()
     conn.close()
     
@@ -116,16 +117,23 @@ def verify_user(email,password):
 
 def update_password(User_Data,new_password):
     conn,cur = connect()
-    cur.execute("UPDATE user_info SET password = ? where UID = ?",(new_password,User_Data[0],))
+    cur.execute("UPDATE user_info SET password = ? WHERE UID = ?",(new_password,User_Data[0],))
     conn.commit()
 
     """changed from here
-    cur.execute("SELECT * FROM user_info where UID = ? and password = ?;",[User_data[0],new_password])
+    cur.execute("SELECT * FROM user_info WHERE UID = ? AND password = ?;",[User_data[0],new_password])
     data = cur.fetchone()
     """
     conn.close()
     #return data
 
+def return_the_book(tran_id):
+    conn,cur = connect()
+    cur.execute("UPDATE lending_section SET av = 1 WHERE transaction_id = ?",(tran_id,))
+    cur.execute("UPDATE reading_section SET read_status = 1 WHERE transaction_id = ?",(tran_id,))
+    conn.commit()
+    conn.close()
+    
 #Joins
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 def get_lent_books(User_Data):
@@ -147,6 +155,7 @@ def get_lent_books(User_Data):
             lent_books[i][4+1] = '--'
             lent_books[i][4+2] = '--'
             lent_books[i][4+3] = '--'
+
     conn.close()
     return lent_books
 
@@ -173,7 +182,7 @@ def delete_removable_book(User_Data,rem_id):
 
 def get_all_reads(User_Data):
     conn,cur = connect()
-    cur.execute("SELECT R.ID,R.ISBN,B.book_name,B.author,U.name,U.email,U.contact_no,R.due_date,R.extn_count,R.read_status FROM reading_section R JOIN books B ON R.ISBN = B.ISBN JOIN user_info U ON R.LID = U.UID WHERE R.RID = ?",(User_Data[0],))
+    cur.execute("SELECT R.ID,R.ISBN,B.book_name,B.author,U.name,U.email,U.contact_no,R.due_date,R.extn_count,R.read_status,R.transaction_id FROM reading_section R JOIN books B ON R.ISBN = B.ISBN JOIN user_info U ON R.LID = U.UID WHERE R.RID = ?",(User_Data[0],))
     all_reads = cur.fetchall()
     conn.close()
     return all_reads

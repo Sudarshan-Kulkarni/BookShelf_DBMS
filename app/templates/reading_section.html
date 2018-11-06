@@ -147,6 +147,12 @@
             </nav>
         </div>
         <h1 style = "margin-left: 30px">Your current Reads</h1>
+        {% if return_message %}
+            <br>
+            <small style = "color:green;">{{ return_message }}</small>
+        {% else %}
+            <br><br>
+        {% endif %}
         {% if current_reads %}
         <table class="a">
             <tr>
@@ -160,12 +166,12 @@
                 <th style="width:23%">Return or Renew</th>
             </tr>
             {% for books in current_reads %}
-                {% set id = books[0] %}
+                {% set id = books[10] %}
                 <tr>
-                    {% for details in books[1:-2] %}
+                    {% for details in books[1:-3] %}
                     <td style="text-align:center">{{details}}</td>
                     {% endfor %}
-                    {% if books[-1]<=3 %}
+                    {% if books[-3] < 3 %}
                         <form method = 'POST'>
                         <td><button class="b1" name = 'renew' value = {{id}} type = "submit" onclick="javascript: form.action='/renew_book'">Renew</button>
                             <button class="b1" name = 'return' value = {{id}} type = "submit" onclick="javascript: form.action='/return_book'">Return</button>
@@ -197,7 +203,7 @@
                     </tr>
                     {% for books in prev_reads %}
                     <tr>
-                        {% for details in books[1:-2] %}
+                        {% for details in books[1:-7] %}
                             <td style="text-align:center">{{details}}</td>
                         {% endfor %}
                         
