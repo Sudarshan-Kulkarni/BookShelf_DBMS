@@ -162,7 +162,7 @@ def read_book(return_message = ""):
             current_reads.append(book)
     
     #print (all_reads)
-    print("return message = ",return_message)
+    #print("return message = ",return_message)
     return render_template('reading_section.html',username = User_Data[1],prev_reads = prev_reads,current_reads = current_reads,return_message = return_message )
 
 @app.route('/return_book', methods = ['POST'])
@@ -171,6 +171,21 @@ def return_and_redirect():
     print("tran_id = ",tran_id)
     return_the_book(tran_id)
     return redirect(url_for('read_book',return_message = 'Returned the book successfully'))
+
+@app.route('/renew_book',methods = ['POST'])
+def renew_and_redirect():
+    tran_id = request.form['renew']
+    flag = renew_the_book(tran_id)
+    if flag :
+        return redirect(url_for('read_book'))
+    else:
+        return redirect(url_for('read_book'))
+
+
+@app.route('/read_new_book',methods = ['POST','GET'])
+def search_for_new_book():
+    return render_template('read_new_book.html')
+
 
 #User Profile Page
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------

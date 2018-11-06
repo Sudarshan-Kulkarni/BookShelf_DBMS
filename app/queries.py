@@ -17,6 +17,7 @@ def create_db():
     cur.execute("DROP TABLE IF EXISTS reading_section;") 
     cur.execute("DROP TABLE IF EXISTS books")
     cur.execute("DROP TABLE IF EXISTS incomplete_transaction;")
+    cur.execute("DROP TRIGGER IF EXISTS update_due_date;")
     
 
     cur.execute("CREATE TABLE user_info(UID integer primary key autoincrement,name varchar(50) ,street varchar(30) ,city varchar(20) ,state varchar(20) ,country varchar(20) ,contact_no int(10) ,email varchar(50),password varchar(20));")
@@ -37,7 +38,12 @@ def create_db():
     cur.execute("CREATE TABLE incomplete_transaction(transaction_id integer primary key autoincrement, RID integer ,ISBN int(5) ,LID integer ,foreign key(ISBN) references books(ISBN));")
 
 
-    #cur.execute("CREATE TRIGGER ")
+    cur.execute('''CREATE TRIGGER update_due_date AFTER UPDATE OF extn_count ON reading_section
+                    WHEN(NEW.extn_count = OLD.extn_count + 1)
+                        BEGIN
+                            UPDATE reading_section SET due_date = date(due_date,\'+7 day\');
+                            UPDATE lending_section SET due_date = date(due_date,\'+7 day\');
+                        END;''')
     # create a trigger later for inserting a transaction into incomplete transaction table.
 
 
@@ -133,7 +139,20 @@ def return_the_book(tran_id):
     cur.execute("UPDATE reading_section SET read_status = 1 WHERE transaction_id = ?",(tran_id,))
     conn.commit()
     conn.close()
-    
+
+def renew_the_book(tran_id):
+    conn,cur = connect()
+    cur.execute("SELECT extn_count FROM reading_section WHERE transaction_id = ?",(tran_id,))
+    extn_count = int(cur.fetchone()[0])
+    print(extn_count)
+    if extn_count < 3:
+        cur.execute("UPDATE reading_section SET extn_count = extn_count+1 WHERE transaction_id = ?",(tran_id,))
+        conn.commit()
+        flag = True
+    else:
+        flag = False
+    conn.close()
+    return flag
 #Joins
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 def get_lent_books(User_Data):
