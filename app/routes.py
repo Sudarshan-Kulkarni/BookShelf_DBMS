@@ -110,7 +110,7 @@ def verify_the_book():
     if request.method=='POST':
         isbn = request.form['isbn']
         book_name = request.form['book_name']
-        print(type(isbn))
+        #print(type(isbn))
 
         if (isbn=="" or not str(isbn).isnumeric()) and book_name=="":
             return render_template('lend_another_book.html',warning_msg="Please enter book details!")
@@ -151,8 +151,10 @@ def remove_and_redirect():
 
 
 @app.route('/reading_section',methods = ['GET','POST'])
-def read_book(return_message = ""):
+def read_book(return_message = "",error_message ="",available_books =""):
     all_reads = get_all_reads(User_Data)
+    return_message = request.args.get('return_message')
+    renew_message = request.args.get('renew_message')
     prev_reads = []
     current_reads = []
     for book in all_reads:
@@ -163,7 +165,7 @@ def read_book(return_message = ""):
     
     #print (all_reads)
     #print("return message = ",return_message)
-    return render_template('reading_section.html',username = User_Data[1],prev_reads = prev_reads,current_reads = current_reads,return_message = return_message )
+    return render_template('reading_section.html',username = User_Data[1],prev_reads = prev_reads,current_reads = current_reads,return_message = return_message,renew_message = renew_message )
 
 @app.route('/return_book', methods = ['POST'])
 def return_and_redirect():
@@ -177,16 +179,39 @@ def renew_and_redirect():
     tran_id = request.form['renew']
     flag = renew_the_book(tran_id)
     if flag :
-        return redirect(url_for('read_book'))
+        return redirect(url_for('read_book',renew_message = 'Renewed the book successfully'))
     else:
-        return redirect(url_for('read_book'))
+        return redirect(url_for('read_book',renew_message = 'Can\'t renew the requested book'))
 
 
 @app.route('/read_new_book',methods = ['POST','GET'])
-def search_for_new_book():
-    return render_template('read_new_book.html')
+def ask_for_new_book():
+    error_message = request.args.get('error_message')
+    available_books = request.args.get('available_books')
+    return render_template('read_new_book.html',error_message = error_message,available_books = available_books)
 
-
+@app.route('/search_for_book',methods = ['POST'])
+def search_book():
+    search_by = request.form['search_by']
+    query = request.form['query']
+    print(search_by)
+    print(type(search_by))
+    if search_by == "ISBN":
+        print(search_by.isnumeric())
+        if not query.isnumeric():
+            return redirect(url_for('ask_for_new_book',error_message = "Enter valid ISBN"))
+        else:
+            available_books = search_for_books(search_by,query)
+            print(available_books)
+            return redirect(url_for('ask_for_new_book',available_books = available_books))
+    else:
+        available_books = search_for_books(search_by,query)
+        print(available_books)
+        if available_books == []:
+            return redirect(url_for('ask_for_new_book',error_message = "No match found for the given name"))
+        else:
+            return redirect(url_for('ask_for_new_book',available_books = available_books))
+                        
 #User Profile Page
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 @app.route('/user_profile',methods = ['GET','POST'])

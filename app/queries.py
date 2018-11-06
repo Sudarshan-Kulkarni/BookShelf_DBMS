@@ -159,7 +159,7 @@ def get_lent_books(User_Data):
     conn,cur = connect()
     #cur.execute("SELECT L.ISBN,B.book_name,B.author,L.av,U.name,U.email,U.contact_no FROM lending_section L,books B,user_info U where L.ISBN=B.ISBN AND L.RID=U.UID AND L.LID = ?;",(User_Data[0],))
     #cur.execute("SELECT ISBN,book_name,author,av from lending_section NATURAL JOIN books INNER JOIN user_info ON lending_section.RID=user_info.UID where LID=?;",(User_Data[0],))
-    cur.execute("SELECT L.ID,L.ISBN,B.book_name,B.author,L.av,U.name,U.email,U.contact_no FROM lending_section L JOIN books B ON L.ISBN=B.ISBN LEFT OUTER JOIN user_info U ON L.RID=U.UID where L.LID= ?;",(User_Data[0],))
+    cur.execute("SELECT L.ID,L.ISBN,B.book_name,B.author,L.av,U.name,U.email,U.contact_no FROM lending_section L JOIN books B ON L.ISBN=B.ISBN LEFT OUTER JOIN user_info U ON L.RID=U.UID WHERE L.LID= ?;",(User_Data[0],))
     lent_books = cur.fetchall()
     for i in range(len(lent_books)):
         lent_books[i] = list(lent_books[i])
@@ -205,3 +205,14 @@ def get_all_reads(User_Data):
     all_reads = cur.fetchall()
     conn.close()
     return all_reads
+
+def search_for_books(search_by,query):
+    conn,cur = connect()
+    if search_by == 'ISBN':
+        cur.execute("SELECT L.LID,L.ID,L.ISBN,B.book_name,B.author,U.name,U.street,U.city,U.state,U.country FROM lending_section L JOIN books B ON L.ISBN=B.ISBN JOIN user_info U ON U.UID = L.LID WHERE L.ISBN = ?;",(query,))
+    else:
+        cur.execute("SELECT L.LID,L.ID,L.ISBN,B.book_name,B.author,U.name,U.street,U.city,U.state,U.country FROM lending_section L JOIN books B ON L.ISBN=B.ISBN JOIN user_info U ON U.UID = L.LID WHERE B.book_name LIKE '%"+query+"%';")
+    
+    available_books = cur.fetchall()
+    conn.close()    
+    return available_books
