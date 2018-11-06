@@ -187,7 +187,11 @@ def renew_and_redirect():
 @app.route('/read_new_book',methods = ['POST','GET'])
 def ask_for_new_book():
     error_message = request.args.get('error_message')
-    available_books = request.args.get('available_books')
+    available_books = request.args.getlist('available_books')
+    for i in range(len(available_books)):
+        available_books[i] = eval(available_books[i])       
+
+    print(available_books)
     return render_template('read_new_book.html',error_message = error_message,available_books = available_books)
 
 @app.route('/search_for_book',methods = ['POST'])
@@ -197,16 +201,18 @@ def search_book():
     print(search_by)
     print(type(search_by))
     if search_by == "ISBN":
-        print(search_by.isnumeric())
+        #print(search_by.isnumeric())
         if not query.isnumeric():
             return redirect(url_for('ask_for_new_book',error_message = "Enter valid ISBN"))
         else:
             available_books = search_for_books(search_by,query)
+            # for i in range(len(available_books)):
+            #     available_books[i] = list(available_books[i]) 
             print(available_books)
             return redirect(url_for('ask_for_new_book',available_books = available_books))
     else:
         available_books = search_for_books(search_by,query)
-        print(available_books)
+        #print(available_books)
         if available_books == []:
             return redirect(url_for('ask_for_new_book',error_message = "No match found for the given name"))
         else:

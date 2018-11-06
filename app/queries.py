@@ -26,6 +26,8 @@ def create_db():
 
     cur.execute("CREATE TABLE lending_section(ID integer primary key autoincrement, LID integer ,ISBN int(5) ,av int(1) ,RID integer ,lent_date date ,due_date date , transaction_id integer, foreign key(ISBN) references books(ISBN));")
     cur.execute("INSERT INTO lending_section values(100 ,101 ,10000 ,1 ,102 ,'2018-05-07' ,'2018-05-21',100);")
+    cur.execute("INSERT INTO lending_section values(null ,101 ,10000 ,1 ,102 ,'2018-05-07' ,'2018-05-21',100);")
+
 
     cur.execute("CREATE TABLE reading_section(ID integer primary key autoincrement, RID integer ,ISBN int(5) , due_date date, extn_count int default 0 ,LID integer ,read_status integer , transaction_id integer, foreign key(ISBN) references books(ISBN));")
     cur.execute("INSERT INTO reading_section values(100 ,102 ,10000 ,'2018-05-21' ,0 ,101 ,0, 100);")
