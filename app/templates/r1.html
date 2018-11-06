@@ -1,0 +1,130 @@
+<html>
+    <head>
+        <title>Hello</title>
+        <style>
+            *
+            {
+                margin:0;
+                padding:0;
+                -webkit-box-sizing: border-box;
+                -moz-box-sizing: border-box;
+                box-sizing: border-box;
+                font-family: Palatino, "Palatino LT STD", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+            }
+
+            body
+            {
+                background:url(https://image.freepik.com/free-photo/wooden-board-empty-table-top-on-of-blurred-background-perspective-brown-wood-table-over-blur-in-coffee-shop-background-can-be-used-mock-up-for-montage-products-display-or-design-key-visual-layout_1253-952.jpg)  no-repeat;
+                background-size:100% 100%;
+                width: 100%;
+                height: 100%;
+                max-height: 100%;
+                background-color: rgba(0,0,0,0.5);           
+            }
+            .menu-area li a
+            {
+                text-decoration:none;
+                color:#fff;
+                letter-spacing:1px;
+                text-transform: uppercase;
+                display:block;
+                padding:0 25px;
+                font-size:17px;
+                line-height:30px;
+                position: relative;
+                z-index: 1;
+            }
+            .menu-area li
+            {
+                list-style:none;
+                display:inline-block;
+            }
+            .custom-padding
+            {
+                padding-top:25px; 
+            }
+            nav
+            {
+                position:relative;
+                padding:10px 20px 10px 10px;
+                text-align:right;
+                z-index:1;
+                background:#333;
+                margin:0 auto;
+                width:calc(100% -60px);
+            }
+            .logo
+            {
+                width:30%;
+                float:left;
+                text-transform:uppercase;
+                color:#fff;
+                font-size:22px;
+                text-align:left;
+                padding-left:2%;
+            }
+            .menu-area li a:hover
+            {
+                background:tomato;
+                color:#fff;
+            }
+            .a
+            {
+                
+                width:235px;
+                height:30px;
+                border:none;
+                border-radius:03px;
+                border:1px solid #ccc;
+                margin-left:35px;
+                padding:0 0 0 5px;
+                margin-top:15px;
+                border-left:03px solid #a86464;
+            }
+            .b1
+            {
+                margin-left: 20px;
+                width: 80px;
+                height: 30px;
+                border: none;
+                color:whitesmoke;
+                cursor:pointer;
+                border-radius: 5px;
+                background:rgb(0,0,0, 0.6);
+                outline: none;
+            }
+            .b1:hover
+            {
+                background:#ec6f17;
+                color:#fff;
+            }
+            
+    </style>
+    </head>
+    <body>
+            <div class="custom-padding">
+                    <nav>
+                        <div class="logo">Reading Section</div>
+                             <ul class="menu-area">
+                                <li><a href="/user_home">Home</a></li>
+                                <li><a href="/user_profile">Profile</a></li>
+                                <li><a href="/login">Logout</a></li>
+                            </ul>
+                    </nav>
+                </div>
+                <br><br>
+                <h1 style = "margin-left: 30px">Search for a new book here</h1>
+                <br>
+                <h3 style = "margin-left: 30px">Search By</h3>
+
+                <form method='POST' >
+                        <select style="width: 10% ; margin-left: 30px">
+                                <option value="ISBN">ISBN</option>
+                                <option value="Book name">Book Name</option>
+                        </select>
+                        <br><br><input type="text" name="ISBN" class="a" style = "margin-left: 30px" required  placeholder="Search query here ..">
+                        <td><button class="b1" name = 'return' value = {{id}} type = "submit" onclick="javascript: form.action=''">Search</button></td>
+                </form>
+                
+    </body>
+</html>
