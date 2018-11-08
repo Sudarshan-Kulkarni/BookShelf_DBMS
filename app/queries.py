@@ -45,7 +45,7 @@ def create_db():
                         UPDATE lending_section SET av = 2 WHERE ID IN (SELECT L_ID FROM incomplete_transaction);
                     END;
                 ''')
-                
+
     cur.execute('''CREATE TRIGGER update_due_date AFTER UPDATE OF extn_count ON reading_section
                     WHEN(NEW.extn_count = OLD.extn_count + 1)
                         BEGIN
@@ -211,6 +211,14 @@ UPDATE THE ABOVE FUNCTION AFTER COMPLETING READING SECTION TO INCLUDE READER'S D
 -------------------------------------
 """
 
+def get_pending_requests(User_Data):
+    conn,cur = connect()
+    cur.execute("SELECT L.ISBN,B.book_name,B.author,U.name,U.contact_no,L.ID,I.transaction_id FROM lending_section L JOIN incomplete_transaction I ON L.LID = I.LID JOIN books B ON L.ISBN = B.ISBN JOIN user_info U ON I.RID = U.UID WHERE L.LID = ? AND L.av = 2",(User_Data[0],))
+    pending_requests = cur.fetchall()
+    print("pending requests = ",pending_requests)
+    conn.close()
+    return pending_requests
+
 def get_removable_books(User_Data):
     conn,cur = connect()
     cur.execute("SELECT ID,ISBN,book_name,author FROM lending_section NATURAL JOIN books WHERE LID= ? AND av=1;",(User_Data[0],))
@@ -254,3 +262,4 @@ def search_for_books(search_by,query,refine_by,User_Data):
     available_books = cur.fetchall()
     conn.close()    
     return available_books
+

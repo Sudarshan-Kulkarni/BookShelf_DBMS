@@ -85,20 +85,21 @@ def get_new_user():
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @app.route('/lending_section',methods = ['GET','POST'])
-def add_book():
-    global New_Book_Data
+# def add_book():
+#     global New_Book_Data
 
-    if request.method =='POST':
-        New_Book_Data = request.form['confirm']
-        print(New_Book_Data)
-        add_new_book(New_Book_Data,User_Data)
-        New_Book_Data = None
+#     if request.method =='POST':
+#         New_Book_Data = request.form['confirm']
+#         print(New_Book_Data)
+#         add_new_book(New_Book_Data,User_Data)
+#         New_Book_Data = None
 
-    return lend_book()
+#     return lend_book()
 
-def lend_book():
+def show_lends():
     lent_books = get_lent_books(User_Data)
-    return render_template('lending_section.html',name = User_Data[1],lent_books = lent_books)
+    pending_requests = get_pending_requests(User_Data)
+    return render_template('lending_section.html',name = User_Data[1],lent_books = lent_books,pending_requests = pending_requests)
 
 @app.route('/lend_another_book',methods = ['GET','POST'])
 def lend_another_book():
@@ -129,6 +130,13 @@ def verify_the_book():
                 return render_template('lend_another_book.html',right_msg=data,book = data[0])
             else:
                 return render_template('lend_another_book.html',warning_msg=flag)
+
+@app.route('/add_new_lend',methods = ['POST'])
+def add_lend_and_redirect():
+    New_Book_Data = request.form['confirm']
+    #print(New_Book_Data)
+    add_new_book(New_Book_Data,User_Data)
+    return redirect(url_for('show_lends'))
 
 
 

@@ -185,6 +185,31 @@
                 <h3>You have not uploaded information of any book.</h3>
             {% endif %}
             <br>
+            <h2>Pending Requests</h2>
+            {% if pending_requests %}
+                <table>
+                    <tr>
+                        <th class="c">ISBN</th>
+                        <th class="b">Title</th> 
+                        <th>Author</th>
+                        <th>Receiver Name</th>
+                        <th class="rc">Receiver Contact</th>
+                    </tr>
+                    {% for book in pending_requests %}
+                        <tr>
+                        {% for details in book %}
+                            <td style="text-align:center">{{details}}</td>
+                        {% endfor %}
+                        </tr>
+                    {% endfor %}
+
+                </table>
+            {% else %}
+            <h2>You have no pending requests!</h2>
+            {% endif %}
+
+            
+
             <div class = "buttons">
                 <button type = 'submit' onclick="window.location.href = '/lend_another_book'" class="b1">Lend another book</button>
                 <button type = 'submit' onclick="window.location.href = '/remove_lent_book'" class="b1">Remove a book</button>
