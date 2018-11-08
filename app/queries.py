@@ -18,6 +18,7 @@ def create_db():
     cur.execute("DROP TABLE IF EXISTS books")
     cur.execute("DROP TABLE IF EXISTS incomplete_transaction;")
     cur.execute("DROP TRIGGER IF EXISTS update_due_date;")
+    cur.execute("DROP TRIGGER IF EXISTS set_requests_status;")
     
 
     cur.execute("CREATE TABLE user_info(UID integer primary key autoincrement,name varchar(50) ,street varchar(30) ,city varchar(20) ,state varchar(20) ,country varchar(20) ,contact_no int(10) ,email varchar(50),password varchar(20));")
@@ -37,15 +38,21 @@ def create_db():
     cur.execute("INSERT INTO books values(10002,'The Database Book' ,'Narain Gehani',null);")
     cur.execute("INSERT INTO books values(10003,'Modern Operating Systems' ,'Andrew S. Tanenbaum',null);")
 
-    cur.execute("CREATE TABLE incomplete_transaction(transaction_id integer primary key autoincrement, RID integer ,ISBN int(5) ,LID integer ,foreign key(ISBN) references books(ISBN));")
+    cur.execute("CREATE TABLE incomplete_transaction(transaction_id integer primary key autoincrement,RID integer ,LID integer ,L_ID integer );")
 
-
+    cur.execute('''CREATE TRIGGER set_request_status AFTER INSERT ON incomplete_transaction
+                    BEGIN
+                        UPDATE lending_section SET av = 2 WHERE ID IN (SELECT L_ID FROM incomplete_transaction);
+                    END;
+                ''')
+                
     cur.execute('''CREATE TRIGGER update_due_date AFTER UPDATE OF extn_count ON reading_section
                     WHEN(NEW.extn_count = OLD.extn_count + 1)
                         BEGIN
                             UPDATE reading_section SET due_date = date(due_date,\'+7 day\');
                             UPDATE lending_section SET due_date = date(due_date,\'+7 day\');
-                        END;''')
+                        END;
+                ''')
     # create a trigger later for inserting a transaction into incomplete transaction table.
 
 
@@ -103,6 +110,24 @@ def add_new_book(new_book_isbn,User_Data):
     cur.execute("INSERT INTO lending_section VALUES (null,?,?,1,null,null,null,null);",(User_Data[0],new_book_isbn,))
     conn.commit()
     conn.close()
+    
+
+def request_book(req_id,User_Data):
+    conn,cur = connect()
+    cur.execute("SELECT * FROM incomplete_transaction;")
+    f = cur.fetchall()
+    if not f:
+        t_id = '100'
+    else:
+        t_id = 'null'
+    
+    cur.execute("INSERT INTO incomplete_transaction SELECT "+t_id+",?,LID,? FROM lending_section WHERE ID = ?;",(User_Data[0],req_id,req_id,))
+    cur.execute("SELECT * FROM incomplete_transaction;")
+    incomplete_transactions = cur.fetchall() 
+    print("incomplete transactions = ",incomplete_transactions)
+    conn.commit()
+    conn.close()
+
     
 
 #Selection
@@ -208,13 +233,24 @@ def get_all_reads(User_Data):
     conn.close()
     return all_reads
 
-def search_for_books(search_by,query):
+def search_for_books(search_by,query,refine_by,User_Data):
     conn,cur = connect()
     if search_by == 'ISBN':
-        cur.execute("SELECT L.LID,L.ID,L.ISBN,B.book_name,B.author,U.name,U.street,U.city,U.state,U.country FROM lending_section L JOIN books B ON L.ISBN=B.ISBN JOIN user_info U ON U.UID = L.LID WHERE L.ISBN = ?;",(query,))
+        if refine_by == 'street':
+            cur.execute("SELECT L.LID,L.ID,L.ISBN,B.book_name,B.author,U.name,U.street,U.city,U.state,U.country FROM lending_section L JOIN books B ON L.ISBN=B.ISBN JOIN user_info U ON U.UID = L.LID WHERE L.ISBN = ? AND U.street = ? AND L.av = 1;",(query,User_Data[2],))
+        elif refine_by == 'city':
+            cur.execute("SELECT L.LID,L.ID,L.ISBN,B.book_name,B.author,U.name,U.street,U.city,U.state,U.country FROM lending_section L JOIN books B ON L.ISBN=B.ISBN JOIN user_info U ON U.UID = L.LID WHERE L.ISBN = ? AND U.city = ? AND L.av = 1;",(query,User_Data[3],))
+        elif refine_by == 'state':
+            cur.execute("SELECT L.LID,L.ID,L.ISBN,B.book_name,B.author,U.name,U.street,U.city,U.state,U.country FROM lending_section L JOIN books B ON L.ISBN=B.ISBN JOIN user_info U ON U.UID = L.LID WHERE L.ISBN = ? AND U.state = ? AND L.av = 1;",(query,User_Data[4],))
+        
     else:
-        cur.execute("SELECT L.LID,L.ID,L.ISBN,B.book_name,B.author,U.name,U.street,U.city,U.state,U.country FROM lending_section L JOIN books B ON L.ISBN=B.ISBN JOIN user_info U ON U.UID = L.LID WHERE B.book_name LIKE '%"+query+"%';")
-    
+        if refine_by == 'street':
+            cur.execute("SELECT L.LID,L.ID,L.ISBN,B.book_name,B.author,U.name,U.street,U.city,U.state,U.country FROM lending_section L JOIN books B ON L.ISBN=B.ISBN JOIN user_info U ON U.UID = L.LID WHERE B.book_name LIKE '%"+query+"%' AND U.street = ? AND L.av = 1;",(User_Data[2]))
+        elif refine_by == 'city':
+            cur.execute("SELECT L.LID,L.ID,L.ISBN,B.book_name,B.author,U.name,U.street,U.city,U.state,U.country FROM lending_section L JOIN books B ON L.ISBN=B.ISBN JOIN user_info U ON U.UID = L.LID WHERE B.book_name LIKE '%"+query+"%' AND U.city = ? AND L.av = 1;",(User_Data[3]))
+        elif refine_by == 'state':
+            cur.execute("SELECT L.LID,L.ID,L.ISBN,B.book_name,B.author,U.name,U.street,U.city,U.state,U.country FROM lending_section L JOIN books B ON L.ISBN=B.ISBN JOIN user_info U ON U.UID = L.LID WHERE B.book_name LIKE '%"+query+"%' AND U.state = ? AND L.av = 1;",(User_Data[4]))
+
     available_books = cur.fetchall()
     conn.close()    
     return available_books

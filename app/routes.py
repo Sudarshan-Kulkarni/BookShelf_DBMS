@@ -188,35 +188,54 @@ def renew_and_redirect():
 def ask_for_new_book():
     error_message = request.args.get('error_message')
     available_books = request.args.getlist('available_books')
+    prev_query = request.args.get('prev_query')
+    prev_search_by = request.args.get('prev_search_by')
     for i in range(len(available_books)):
         available_books[i] = eval(available_books[i])       
 
     print(available_books)
-    return render_template('read_new_book.html',error_message = error_message,available_books = available_books)
+    return render_template('read_new_book.html',error_message = error_message,available_books = available_books,prev_query = prev_query,prev_search_by = prev_search_by)
 
 @app.route('/search_for_book',methods = ['POST'])
 def search_book():
     search_by = request.form['search_by']
-    query = request.form['query']
+    if request.form['query'] != "":
+        query = request.form['query']
+    else:
+        query = request.form['prev_search_query']    
+    
+    refine_by = request.form['refine_by']
+
+    print("query = ",query)
     print(search_by)
     print(type(search_by))
+
     if search_by == "ISBN":
         #print(search_by.isnumeric())
         if not query.isnumeric():
-            return redirect(url_for('ask_for_new_book',error_message = "Enter valid ISBN"))
+            return redirect(url_for('ask_for_new_book',error_message = "Enter valid ISBN",prev_search_by = search_by))
         else:
-            available_books = search_for_books(search_by,query)
+            available_books = search_for_books(search_by,query,refine_by,User_Data)
             # for i in range(len(available_books)):
             #     available_books[i] = list(available_books[i]) 
             print(available_books)
-            return redirect(url_for('ask_for_new_book',available_books = available_books))
+            return redirect(url_for('ask_for_new_book',available_books = available_books,prev_query = query,prev_search_by = search_by))
     else:
-        available_books = search_for_books(search_by,query)
+        available_books = search_for_books(search_by,query,refine_by,User_Data)
         #print(available_books)
         if available_books == []:
-            return redirect(url_for('ask_for_new_book',error_message = "No match found for the given name"))
+            return redirect(url_for('ask_for_new_book',error_message = "No match found for the given name",prev_search_by = search_by))
         else:
-            return redirect(url_for('ask_for_new_book',available_books = available_books))
+            return redirect(url_for('ask_for_new_book',available_books = available_books,prev_query = query,prev_search_by = search_by))
+        
+
+@app.route('/request_book',methods = ['POST'])
+def request_and_redirect():
+    req_id = request.form['request_id']
+    request_book(req_id,User_Data)
+    return redirect(url_for('ask_for_new_book'))
+
+    
                         
 #User Profile Page
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------
