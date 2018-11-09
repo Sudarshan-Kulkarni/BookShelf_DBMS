@@ -186,7 +186,7 @@ def get_lent_books(User_Data):
     conn,cur = connect()
     #cur.execute("SELECT L.ISBN,B.book_name,B.author,L.av,U.name,U.email,U.contact_no FROM lending_section L,books B,user_info U where L.ISBN=B.ISBN AND L.RID=U.UID AND L.LID = ?;",(User_Data[0],))
     #cur.execute("SELECT ISBN,book_name,author,av from lending_section NATURAL JOIN books INNER JOIN user_info ON lending_section.RID=user_info.UID where LID=?;",(User_Data[0],))
-    cur.execute("SELECT L.ID,L.ISBN,B.book_name,B.author,L.av,U.name,U.email,U.contact_no FROM lending_section L JOIN books B ON L.ISBN=B.ISBN LEFT OUTER JOIN user_info U ON L.RID=U.UID WHERE L.LID= ?;",(User_Data[0],))
+    cur.execute("SELECT L.ID,L.ISBN,B.book_name,B.author,L.av,U.name,U.email,U.contact_no,L.lent_date FROM lending_section L JOIN books B ON L.ISBN=B.ISBN LEFT OUTER JOIN user_info U ON L.RID=U.UID WHERE L.LID= ?;",(User_Data[0],))
     lent_books = cur.fetchall()
     for i in range(len(lent_books)):
         lent_books[i] = list(lent_books[i])
@@ -201,6 +201,7 @@ def get_lent_books(User_Data):
             lent_books[i][4+1] = '--'
             lent_books[i][4+2] = '--'
             lent_books[i][4+3] = '--'
+            lent_books[i][4+4] = '--'
 
     conn.close()
     return lent_books
@@ -213,7 +214,7 @@ UPDATE THE ABOVE FUNCTION AFTER COMPLETING READING SECTION TO INCLUDE READER'S D
 
 def get_pending_requests(User_Data):
     conn,cur = connect()
-    cur.execute("SELECT L.ISBN,B.book_name,B.author,U.name,U.contact_no,L.ID,I.transaction_id FROM lending_section L JOIN incomplete_transaction I ON L.LID = I.LID JOIN books B ON L.ISBN = B.ISBN JOIN user_info U ON I.RID = U.UID WHERE L.LID = ? AND L.av = 2",(User_Data[0],))
+    cur.execute("SELECT L.ISBN,B.book_name,B.author,U.name,U.contact_no,L.ID,I.transaction_id,L.LID FROM lending_section L JOIN incomplete_transaction I ON L.LID = I.LID JOIN books B ON L.ISBN = B.ISBN JOIN user_info U ON I.RID = U.UID WHERE L.LID = ? AND L.av = 2 AND L.ID = I.L_ID",(User_Data[0],))
     pending_requests = cur.fetchall()
     print("pending requests = ",pending_requests)
     conn.close()

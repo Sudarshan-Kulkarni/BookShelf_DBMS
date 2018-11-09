@@ -168,7 +168,8 @@
                     </ul>
             </nav>
         </div>
-        <h1 style = "margin-left: 30px">Your current Reads</h1>
+        <br>
+        <h1 style = "margin-left: 30px">Current reads</h1>
         {% if return_message %}
             <br>
             <small style = "color:green;">{{ return_message }}</small>
@@ -177,7 +178,7 @@
             <br>
             <small style = "color:green;">{{ renew_message }}</small>        
         {% else %}
-            <br><br>
+            <br>
         {% endif %}
         {% if current_reads %}
         <table class="a">
@@ -212,15 +213,14 @@
             {% endfor %}
         </table>
         {% else %}
-            <h3 style = "margin-left: 30px">You have no active reads</h3>
+            <h2 style = "margin-left: 30px">You have no active reads.</h2>
         {% endif %}
-
-
-
+        <br>
+        <button class="b2" type="submit" onclick="window.location.href='/read_new_book'">Read New Book</button>
         
-        <br><br><br><br>
+        <br><br><br>
+        <h1 style = "margin-left: 30px">Previous Reads</h1>
         {% if prev_reads %}
-            <h1 style = "margin-left: 30px">Previous Reads</h1>
             <table class="a">
                     <tr>
                             <th class="c">ISBN</th>
@@ -239,11 +239,7 @@
             </table>
         {% else %}
             <h2 style = "margin-left: 30px">You have no previous reads</h2>
-        {% endif %}
-        <br>
-        <br>
-        <button class="b2" type="submit" onclick="window.location.href='/read_new_book'">Read New Book</button>
-        
+        {% endif %}        
     </body>
 
 </html>
