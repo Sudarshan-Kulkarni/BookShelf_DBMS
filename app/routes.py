@@ -60,7 +60,8 @@ def get_new_user():
 
         if(password!=c_password):
             return render_template('signup.html',msg1 = 'Passwords don\'t match')
-
+        if len(password)<8:
+            return render_template('signup.html',msg1 = 'Password should be atleast 8 characters long')
         fn = request.form['Fname']
         ln = request.form['Lname']
         name = fn+' '+ln
@@ -85,25 +86,31 @@ def get_new_user():
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @app.route('/lending_section',methods = ['GET','POST'])
-# def add_book():
-#     global New_Book_Data
-
-#     if request.method =='POST':
-#         New_Book_Data = request.form['confirm']
-#         print(New_Book_Data)
-#         add_new_book(New_Book_Data,User_Data)
-#         New_Book_Data = None
-
-#     return lend_book()
 
 def show_lends():
     lent_books = get_lent_books(User_Data)
     pending_requests = get_pending_requests(User_Data)
+    print(lent_books)
     return render_template('lending_section.html',name = User_Data[1],lent_books = lent_books,pending_requests = pending_requests)
 
 @app.route('/lend_another_book',methods = ['GET','POST'])
 def lend_another_book():
     return render_template('lend_another_book.html')
+
+@app.route('/reject_book',methods = ['POST'])
+def reject_book():
+    if request.method=='POST':
+        t_id = request.form['reject']
+        print(type(t_id))
+        accept_or_reject_the_book(t_id,0)
+        return redirect(url_for('show_lends'))
+
+@app.route('/accept_book',methods = ['POST'])
+def accept_book():
+    if request.method=='POST':
+        t_id = request.form['accept']
+        accept_or_reject_the_book(t_id,1)
+        return redirect(url_for('show_lends'))
 
 @app.route('/verify_book', methods = ['GET','POST'])
 def verify_the_book():
@@ -134,14 +141,11 @@ def verify_the_book():
 @app.route('/add_new_lend',methods = ['POST'])
 def add_lend_and_redirect():
     New_Book_Data = request.form['confirm']
-    #print(New_Book_Data)
     add_new_book(New_Book_Data,User_Data)
     return redirect(url_for('show_lends'))
 
 
-
 @app.route('/remove_lent_book', methods = ['POST','GET'])
-
 def remove_old_book():
     if request.method=='POST':
         print(request.form)
@@ -153,7 +157,6 @@ def ask_which_book():
 @app.route('/remove_the_lent_book', methods = ['POST'])
 def remove_and_redirect():
     rem_id = request.form['remove']
-    #print("rem_id = ",rem_id)
     delete_removable_book(User_Data,rem_id)
     return redirect(url_for('remove_old_book'))
 
@@ -166,14 +169,13 @@ def read_book(return_message = "",error_message ="",available_books =""):
     prev_reads = []
     current_reads = []
     for book in all_reads:
-        if book[9] == 1:
+        if book[7] == 1:
             prev_reads.append(book)
-        else:
+        elif book[7] == 0:
             current_reads.append(book)
     
-    #print (all_reads)
-    #print("return message = ",return_message)
-    return render_template('reading_section.html',username = User_Data[1],prev_reads = prev_reads,current_reads = current_reads,return_message = return_message,renew_message = renew_message )
+    l = len(current_reads)
+    return render_template('reading_section.html',username = User_Data[1],prev_reads = prev_reads,current_reads = current_reads,return_message = return_message,renew_message = renew_message,l = l )
 
 @app.route('/return_book', methods = ['POST'])
 def return_and_redirect():
@@ -198,11 +200,12 @@ def ask_for_new_book():
     available_books = request.args.getlist('available_books')
     prev_query = request.args.get('prev_query')
     prev_search_by = request.args.get('prev_search_by')
+    success_message = request.args.get('success_message')
     for i in range(len(available_books)):
         available_books[i] = eval(available_books[i])       
 
     print(available_books)
-    return render_template('read_new_book.html',error_message = error_message,available_books = available_books,prev_query = prev_query,prev_search_by = prev_search_by)
+    return render_template('read_new_book.html',success_message = success_message,error_message = error_message,available_books = available_books,prev_query = prev_query,prev_search_by = prev_search_by)
 
 @app.route('/search_for_book',methods = ['POST'])
 def search_book():
@@ -226,13 +229,16 @@ def search_book():
             available_books = search_for_books(search_by,query,refine_by,User_Data)
             # for i in range(len(available_books)):
             #     available_books[i] = list(available_books[i]) 
-            print(available_books)
-            return redirect(url_for('ask_for_new_book',available_books = available_books,prev_query = query,prev_search_by = search_by))
+            #print(available_books)
+            if available_books == []:
+                return redirect(url_for('ask_for_new_book',error_message = 'No matches found for the given ISBN and the location',available_books = available_books,prev_query = query,prev_search_by = search_by))
+            else:
+                return redirect(url_for('ask_for_new_book',available_books = available_books,prev_query = query,prev_search_by = search_by))
     else:
         available_books = search_for_books(search_by,query,refine_by,User_Data)
         #print(available_books)
         if available_books == []:
-            return redirect(url_for('ask_for_new_book',error_message = "No match found for the given name",prev_search_by = search_by))
+            return redirect(url_for('ask_for_new_book',error_message = "No matches found for the given name and location",prev_query = query,prev_search_by = search_by))
         else:
             return redirect(url_for('ask_for_new_book',available_books = available_books,prev_query = query,prev_search_by = search_by))
         
@@ -240,8 +246,11 @@ def search_book():
 @app.route('/request_book',methods = ['POST'])
 def request_and_redirect():
     req_id = request.form['request_id']
-    request_book(req_id,User_Data)
-    return redirect(url_for('ask_for_new_book'))
+    flag = request_book(req_id,User_Data)
+    if flag:
+        return redirect(url_for('ask_for_new_book',success_message = 'Requested successfully'))
+    else:
+        return redirect(url_for('ask_for_new_book',error_message = 'Oops, something went wrong!Try again!'))
 
     
                         
@@ -250,6 +259,12 @@ def request_and_redirect():
 @app.route('/user_profile',methods = ['GET','POST'])
 def display_profile():
     return render_template('user_profile.html',username = User_Data[1],email=User_Data[7],street=User_Data[2],city=User_Data[3],state=User_Data[4],country=User_Data[5],contact_number=User_Data[6],msg = None)
+
+@app.route('/another_profile',methods = ['GET','POST'])
+def display_another_profile():
+    u_id = request.form['another']
+    u_data = get_another_user(u_id)
+    return render_template('another_user_profile.html',username = u_data[1],email=u_data[7],street=u_data[2],city=u_data[3],state=u_data[4],country=u_data[5],contact_number=u_data[6],msg = None)
 
 @app.route('/change_password',methods = ['GET','POST'])
 def get_new_password():

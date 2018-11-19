@@ -146,17 +146,17 @@
             <form id='form' method = 'POST'>
             <table  class="a">
                 <tr>
-                <th class="c">ISBN</th>
-                <th class="b">Title</th> 
-                <th class = "aut">Author</th>
-                <th class = "aut">Remove</th>
+                    <th class="c">ISBN</th>
+                    <th class="b">Title</th> 
+                    <th class = "aut">Author</th>
+                    <th class = "aut">Remove</th>
                 </tr>
                 {% for book in removable_books %}
                     {% set id = book[0] %}
                     <tr>
-                    {% for detail in book[1:] %}
-                        <td>{{ detail }}</td>
-                    {% endfor %}
+                        {% for detail in book[1:4] %}
+                            <td>{{ detail }}</td>
+                        {% endfor %}
                     <td><button class = "b1" name = 'remove' value = {{id}} type = "submit" onclick="javascript: form.action='/remove_the_lent_book'" >Remove</button></td>
                 {% endfor %}
 

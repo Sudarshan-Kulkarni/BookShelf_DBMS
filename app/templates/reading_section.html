@@ -83,7 +83,7 @@
             table.a 
             {
                 table-layout: auto;
-                width:90%; 
+                width:80%; 
                 margin-left: 30px;
                 font-size: 20px;
 
@@ -117,7 +117,7 @@
             }
             .b1
             {
-                margin-left: 25px;
+                margin-left: 29px;
                 width: 80px;
                 height: 30px;
                 border: none;
@@ -155,6 +155,19 @@
                 color: whitesmoke;
             }
 
+            .bb
+            {
+                /* margin-left: 35px; */
+                /* align-content: center; */
+                text-decoration: underline;
+                font-size:20px;
+                border: none;
+                outline: none;
+                color: black;
+                cursor:pointer;
+                background: none;
+            }
+
         </style>
     </head>
     <body>
@@ -170,53 +183,56 @@
         </div>
         <br>
         <h1 style = "margin-left: 30px">Current reads</h1>
-        {% if return_message %}
-            <br>
-            <small style = "color:green;">{{ return_message }}</small>
-        
-        {% elif renew_message %}
-            <br>
-            <small style = "color:green;">{{ renew_message }}</small>        
-        {% else %}
-            <br>
-        {% endif %}
         {% if current_reads %}
+        <form id = 'form' method = 'POST'>
         <table class="a">
             <tr>
                 <th class="c">ISBN</th>
                 <th class="b">Title</th>
                 <th class="d">Author</th>
-                <th style="width:10%">Lender Name</th>
-                <th class="le">Lender email</th>
-                <th class="lc">Lender Contact</th>
+                <th style="width:10%">Lender</th>
                 <th style="width:10%">Due Date</th>
-                <th style="width:23%">Return or Renew</th>
+                <th style="width:15%">Return or Renew</th>
             </tr>
             {% for books in current_reads %}
-                {% set id = books[10] %}
+                {% set id = books[8] %}
                 <tr>
-                    {% for details in books[1:-3] %}
-                    <td style="text-align:center">{{details}}</td>
+                    {% for details in books[1:4] %}
+                        <td style="text-align:center">{{details}}</td>
                     {% endfor %}
-                    {% if books[-3] < 3 %}
-                        <form method = 'POST'>
-                        <td><button class="b1" name = 'renew' value = {{id}} type = "submit" onclick="javascript: form.action='/renew_book'">Renew</button>
-                            <button class="b1" name = 'return' value = {{id}} type = "submit" onclick="javascript: form.action='/return_book'">Return</button>
-                        </td>
-                        </form>
+                    {% set lid = books[9] %}                        
+                        <td align="center"><button class="bb" name = 'another' value = {{lid}} type = "submit" onclick="javascript: form.action='/another_profile'">{{books[4]}}</button></td>                       
+                    <td style="text-align:center">{{books[5]}}</td>
+                    <td>
+                    {% if books[-4] < 3 %}
+                        <button class="b1" name = 'renew' value = {{id}} type = "submit" onclick="javascript: form.action='/renew_book'">Renew</button>
+                        <button class="b1" name = 'return' value = {{id}} type = "submit" onclick="javascript: form.action='/return_book'">Return</button>
                     {% else %}
-                        <form method = 'POST'>
-                        <td><button class="b1" name = 'return' value = {{id}} type = "submit" onclick="javascript: form.action='/return_book'">Return</button></td>
-                        </form>
+                        <button class="b1" name = 'return' value = {{id}} type = "submit" onclick="javascript: form.action='/return_book'">Return</button>
                     {% endif %}
+                    </td>
                 </tr>
             {% endfor %}
         </table>
+        </form>
         {% else %}
-            <h2 style = "margin-left: 30px">You have no active reads.</h2>
+            <h2 style = "margin-left: 30px">You have no active reads</h2>
         {% endif %}
-        <br>
-        <button class="b2" type="submit" onclick="window.location.href='/read_new_book'">Read New Book</button>
+        {% if return_message %}
+            <small style = "color:green; margin-left: 30px;">{{ return_message }}</small>
+            <br>
+        {% elif renew_message %}
+            <small style = "color:green; margin-left: 30px;">{{ renew_message }}</small>
+            <br>   
+        {% else %}
+            <br>
+            <br>
+        {% endif %}
+        {% if l != 3 %}
+            <button class="b2" type="submit" onclick="window.location.href='/read_new_book'">Read New Book</button>
+        {% else %}
+            <h2 style = "margin-left: 30px">(You are currently reading the maximum number of books possible at a time)</h2>
+        {% endif %}
         
         <br><br><br>
         <h1 style = "margin-left: 30px">Previous Reads</h1>
@@ -229,7 +245,7 @@
                     </tr>
                     {% for books in prev_reads %}
                     <tr>
-                        {% for details in books[1:-7] %}
+                        {% for details in books[1:4] %}
                             <td style="text-align:center">{{details}}</td>
                         {% endfor %}
                         

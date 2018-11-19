@@ -55,7 +55,7 @@
 
             .rc
             {
-                width:13%;
+                width:10%;
                 font-size: 20px;
             }
             .re
@@ -66,7 +66,7 @@
 
             .aa
             {
-                width:10%;
+                width:13%;
                 font-size: 20px;
             }
             
@@ -144,8 +144,36 @@
                 background:#ec6f17;
                 color:#fff;
             }
+            .b2
+            {
+                margin-left: 25px;
+                width: 80px;
+                height: 30px;
+                border: none;
+                color:whitesmoke;
+                cursor:pointer;
+                border-radius: 5px;
+                background:rgb(0,0,0, 0.6);
+                outline: none;
+            }
+            .b2:hover
+            {
+                background:#ec6f17;
+                color:#fff;
+            }
 
-
+            .bb
+            {
+                /* margin-left: 35px; */
+                /* align-content: center; */
+                text-decoration: underline;
+                font-size:20px;
+                border: none;
+                outline: none;
+                color: black;
+                cursor:pointer;
+                background: none;
+            }
         </style>
     </head>
         <body>
@@ -168,16 +196,22 @@
                     <th class="b">Title</th> 
                     <th>Author</th>
                     <th class="aa">Availability</th>
-                    <th class="rc">Receiver Name</th>
-                    <th class="re">Receiver Email</th>
-                    <th class="rc">Receiver Contact</th>
                     <th style="width:15%">Lent date</th>
+                    <th class="rc">Reader</th>
                     </tr>
                     {% for book in lent_books %}
                         <tr>
-                        {% for details in book[1:]%}
+                        {% for details in book[1:6]%}
                             <td style="text-align:center">{{details}}</td>
                         {% endfor %}
+                        {% if book[4] != "Lent" %}
+                            <td style="text-align:center">{{book[6]}}</td>
+                        {% else %}
+                            {% set rid = book[7] %}
+                            <form method="POST">
+                                <td align="center"><button class="bb" name = 'another' value = {{rid}} type = "submit" onclick="javascript: form.action='/another_profile'">{{book[6]}}</button></td>
+                            </form>
+                        {% endif %}
                         </tr>
                     {% endfor %}
                 </table>
@@ -197,22 +231,27 @@
                         <th class="c">ISBN</th>
                         <th class="b">Title</th> 
                         <th>Author</th>
-                        <th>Receiver Name</th>
+                        <th class="rc">Receiver Name</th>
                         <th class="rc">Receiver Contact</th>
+                        <th style="width:23%">Approval</th>
                     </tr>
                     {% for book in pending_requests %}
+                    {% set id = book[6]%}
                         <tr>
-                        {% for details in book %}
+                        {% for details in book[:-3] %}
                             <td style="text-align:center">{{details}}</td>
                         {% endfor %}
+                        <form method = 'POST'>
+                        <td><button class="b2" name = 'accept' value = {{id}} type = "submit" onclick="javascript: form.action='/accept_book'">Accept</button>
+                            <button class="b2" name = 'reject' value = {{id}} type = "submit" onclick="javascript: form.action='/reject_book'">Reject</button>
+                        </td>
+                        </form>
                         </tr>
                     {% endfor %}
 
                 </table>
             {% else %}
-            <h2 style="margin-left: 30px">You have no pending requests!</h2>
+            <h2 style="margin-left: 30px">You have no pending requests</h2>
             {% endif %}
-            
-
         </body>
 </html>

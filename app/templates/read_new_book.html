@@ -176,7 +176,7 @@
                             </ul>
                     </nav>
                 </div>
-                <br><br>
+                <br>
                 <h1 style = "margin-left: 30px">Search for a new book here</h1>
                 <br>
                 <h3 style = "margin-left: 30px">Search By</h3>
@@ -191,8 +191,6 @@
                                 <option value="Book name">Book Name</option>
                             {% endif %}                            
                         </select>
-                        <br><br><input type="text" name="query" class="a" style = "margin-left: 30px" placeholder="Search query here ..">
-                        <td><button class="b1" name = 'search' type = "submit" onclick="javascript: form.action='/search_for_book'">Search</button></td>
                         <br><br>
                         <h3 style = "margin-left: 30px">Refine by</h3>
                         <select style="width: 10% ; margin-left: 30px" name = "refine_by">
@@ -200,10 +198,21 @@
                             <option value="city">City</option>
                             <option value="state">State</option>
                         </select>
-                        <td><button class="b2" name = 'search' type = "submit" onclick="javascript: form.action='/search_for_book'">Refine Search</button></td>
+                        <br><br><input type="text" name="query" class="a" style = "margin-left: 30px" placeholder="Search query here ..">
+                        <td><button class="b1" name = 'search' type = "submit" onclick="javascript: form.action='/search_for_book'">Search</button></td>
+                        <!-- <td><button class="b2" name = 'search' type = "submit" onclick="javascript: form.action='/search_for_book'">Refine Search</button></td> -->
+
                         
                         <input type="text" value={{prev_query}} name="prev_search_query" style="display:none">
-                        <br><br>
+                        <br>
+                        {% if error_message %}
+                            <small style = "color:red; margin-left: 30px;">{{ error_message }}</small>
+                            <br>
+                        {% elif success_message %}
+                            <small style = "color:green; margin-left: 30px;">{{ success_message }}</small>
+                            <br>
+                        {% endif %}
+                        <br>
                 </form>
                 
                 {% if available_books %}
