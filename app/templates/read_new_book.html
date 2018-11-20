@@ -148,12 +148,12 @@
             }
             .ln
             {
-                width:20%;
+                width:13%;
                 font-size: 20px;
             }
             .e
             {
-                width:20%;
+                width:22%;
                 font-size: 20px;
             }
             .aut
@@ -162,6 +162,16 @@
                 font-size: 20px;
             }
 
+            .bb
+            {
+                text-decoration: underline;
+                font-size:20px;
+                border: none;
+                outline: none;
+                color: black;
+                cursor:pointer;
+                background: none;
+            }
             
     </style>
     </head>
@@ -200,8 +210,6 @@
                         </select>
                         <br><br><input type="text" name="query" class="a" style = "margin-left: 30px" placeholder="Search query here ..">
                         <td><button class="b1" name = 'search' type = "submit" onclick="javascript: form.action='/search_for_book'">Search</button></td>
-                        <!-- <td><button class="b2" name = 'search' type = "submit" onclick="javascript: form.action='/search_for_book'">Refine Search</button></td> -->
-
                         
                         <input type="text" value={{prev_query}} name="prev_search_query" style="display:none">
                         <br>
@@ -222,17 +230,21 @@
                         <th class="c">ISBN</th>
                         <th class="b">Title</th> 
                         <th class="e">Author</th>
-                        <th class="ln">Lender Name</th>
+                        <th class="ln">Lender</th>
                         <th class = "aut">Request Book</th>
                         </tr>
                         {% for book in available_books %}
                         {% set id = book[1] %}
                             <tr>
-                            {% for details in book[2:6] %}
+                            {% for details in book[2:5] %}
                                 <td style="text-align:center">{{details}}</td>
                             {% endfor %}
+                            {% set lid = book[-1] %}
+                            <form method="POST">
+                                <td align="center"><button class="bb" name = 'another' value = {{lid}} type = "submit" onclick="javascript: form.action='/another_profile'">{{book[5]}}</button></td>
+                            </form>
                             <form method = 'POST'>
-                            <td><button class = "b1" name = 'request_id' value = {{id}} type = "submit" onclick="javascript: form.action='/request_book'" style="align:center">Request</button></td>
+                            <td align="center"><button class = "b1" name = 'request_id' value = {{id}} type = "submit" onclick="javascript: form.action='/request_book'">Request</button></td>
                             </tr>
                             <form>
                         {% endfor %}

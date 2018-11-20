@@ -32,12 +32,17 @@
         table.a 
             {
                 table-layout: auto;
-                width:75%;    
+                width:65%;    
             }
 
             .b
             {
                 width:20%;
+            }
+
+            .aaa
+            {
+                width:16%;
             }
 
             .c
@@ -121,6 +126,23 @@
                 background:#ec6f17;
                 color:#fff;
             }
+            .bb
+            {
+                margin-left: 20px;
+                width: 80px;
+                height: 25px;
+                border: none;
+                color:whitesmoke;
+                cursor:pointer;
+                border-radius: 5px;
+                background:rgb(0,0,0, 0.6);
+                outline: none;
+            }
+            .bb:hover
+            {
+                background:#ec6f17;
+                color:#fff;
+            }
         </style>
     </head>
     <body>
@@ -153,21 +175,25 @@
         
             {%if right_msg%}
                 <br><br>
-                <p>Confirm book details</p>
-                <table  class="a">
+                <h2>Confirm book details</h2>
+                <table class="a">
                     <tr>
                     <th class="c">ISBN</th>
                     <th class="b">Title</th> 
-                    <th class="b">Author</th>
+                    <th class="aaa">Author</th>
+                    <th class="c">Confirmation</th>
                     </tr>
-                    <tr>
-                    {% for detail in right_msg %}
-                        <td style="text-align:center">{{detail}}</td>
+                    {% for book in right_msg %}
+                        <tr>
+                            {% for detail in book %}
+                                <td style="text-align:center">{{detail}}</td>
+                            {% endfor %}
+                            {% set isbn = book[0] %}
+                            <td align="center"><button class="bb" type="submit" onclick="javascript: form.action='/add_new_lend'" value = {{isbn}} name = 'confirm' class="b1">Confirm</button></td>
+                        </tr>
                     {% endfor %}
-                    </tr>
                 </table>
                 <br>          
-                <button type="submit" onclick="javascript: form.action='/add_new_lend'" value = {{book}} name = 'confirm' class="b1">Confirm</button>
             
             {%endif%}
         </form>

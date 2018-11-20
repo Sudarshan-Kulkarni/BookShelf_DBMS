@@ -29,7 +29,6 @@ def create_db():
     cur.execute("CREATE TABLE lending_section(ID integer primary key autoincrement, LID integer ,ISBN int(5) ,av int(1) ,RID integer ,lent_date date ,due_date date , transaction_id integer, foreign key(ISBN) references books(ISBN));")
     cur.execute("INSERT INTO lending_section values(null ,101 ,10000 ,1 ,102 ,'2018-05-07' ,'2018-05-21',100);")
 
-
     cur.execute("CREATE TABLE reading_section(ID integer primary key autoincrement, RID integer ,ISBN int(5) , due_date date, extn_count int default 0 ,LID integer ,read_status integer , transaction_id integer, foreign key(ISBN) references books(ISBN));")
     cur.execute("CREATE TABLE books(ISBN int(5) ,book_name varchar(40) ,author varchar(50) ,popularity int DEFAULT 0);")
     cur.execute("INSERT INTO books values(10000,'Data Communications and Networking' ,'Forouzan',null);")
@@ -55,7 +54,7 @@ def create_db():
                 ''')
 
     cur.execute('''CREATE VIEW rem_books AS
-                    SELECT ID,ISBN,book_name,author,LID FROM lending_section NATURAL JOIN books WHERE av=1;
+                    SELECT ID,ISBN,book_name,author,LID FROM lending_section NATURAL JOIN books WHERE (av = 1 OR av = 3);
                 ''')
 
 
@@ -79,11 +78,11 @@ def add_user(name,street,city,state,country,contact_no,email,password):
         conn.close()
         return 1        
 
-def verify_book_details(isbn,bname):
+def verify_book_details(isbn,query):
     conn,cur = connect()
-    if (isbn=="" and bname!="") or (not isbn.isnumeric() and bname!=""):
-        cur.execute("SELECT * FROM books where book_name=?;",[bname])
-        data = cur.fetchone()
+    if (isbn=="" and query!="") or (not isbn.isnumeric() and query!=""):
+        cur.execute("SELECT * FROM books WHERE book_name LIKE '%"+query+"%';")
+        data = cur.fetchall()
         conn.close()
         if(data):
             print(data)
@@ -92,14 +91,14 @@ def verify_book_details(isbn,bname):
             return "Book name is incorrect!",None
     elif isbn.isnumeric():
         cur.execute("SELECT * FROM books where ISBN=?;",(isbn,))
-        data = cur.fetchone()
+        data = cur.fetchall()
         if(data):
             print(data)
             conn.close()
             return True,data
         else:
-            cur.execute("SELECT * FROM books where book_name=?;",[bname])
-            data = cur.fetchone()
+            cur.execute("SELECT * FROM books where book_name LIKE '%"+query+"%';")
+            data = cur.fetchall()
             if(data):
                 print(data)
                 conn.close()
@@ -184,7 +183,6 @@ def update_password(User_Data,new_password):
     data = cur.fetchone()
     """
     conn.close()
-    #return data
 
 def return_the_book(tran_id):
     conn,cur = connect()
@@ -206,11 +204,26 @@ def renew_the_book(tran_id):
         flag = False
     conn.close()
     return flag
+
+def resume_lending(User_Data):
+    conn,cur = connect()
+    cur.execute("UPDATE lending_section SET av = 1 WHERE av = 3 AND LID = ?;",(User_Data[0],))
+    conn.commit()
+    conn.close()
+
+def pause_lending(User_Data):
+    conn,cur = connect()
+    cur.execute("DELETE FROM incomplete_transaction WHERE transaction_id IN (SELECT transaction_id FROM lending_section WHERE av = 2 AND LID = ?);",(User_Data[0],))
+    cur.execute("UPDATE lending_section SET av = 3 WHERE (av = 2 OR av = 1) AND LID = ?;",(User_Data[0],))
+    conn.commit()
+    conn.close()
+
 #Joins
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 def get_lent_books(User_Data):
     conn,cur = connect()
-    cur.execute("SELECT L.ID,L.ISBN,B.book_name,B.author,L.av,L.lent_date,U.name,U.UID FROM lending_section L JOIN books B ON L.ISBN=B.ISBN LEFT OUTER JOIN user_info U ON L.RID=U.UID WHERE L.LID= ?;",(User_Data[0],))
+    cur.execute("SELECT L.ID,L.ISBN,B.book_name,B.author,L.av,L.lent_date,U.name,U.UID FROM lending_section L JOIN books B ON L.ISBN=B.ISBN LEFT OUTER JOIN user_info U ON L.RID=U.UID WHERE L.LID= ? ORDER BY L.ISBN;",(User_Data[0],))
     lent_books = cur.fetchall()
     for i in range(len(lent_books)):
         lent_books[i] = list(lent_books[i])
@@ -219,7 +232,12 @@ def get_lent_books(User_Data):
         if lent_books[i][4]==0:
             lent_books[i][4] = 'Lent'
         elif lent_books[i][4]==2:
-            lent_books[i][4] = 'suraj didn\'t do shit'
+            lent_books[i][4] = 'Requested'
+            lent_books[i][4+1] = '--'
+            lent_books[i][4+2] = '--'
+            lent_books[i][4+3] = '--'
+        elif lent_books[i][4]==3:
+            lent_books[i][4] = 'Paused'
             lent_books[i][4+1] = '--'
             lent_books[i][4+2] = '--'
             lent_books[i][4+3] = '--'
@@ -232,15 +250,9 @@ def get_lent_books(User_Data):
     conn.close()
     return lent_books
 
-"""
-ATTENTION----------------------------
-UPDATE THE ABOVE FUNCTION AFTER COMPLETING READING SECTION TO INCLUDE READER'S DATA IF THE BOOK HAS BEEN LENT
--------------------------------------
-"""
-
 def get_pending_requests(User_Data):
     conn,cur = connect()
-    cur.execute("SELECT L.ISBN,B.book_name,B.author,U.name,U.contact_no,L.ID,I.transaction_id,L.LID FROM lending_section L JOIN incomplete_transaction I ON L.LID = I.LID JOIN books B ON L.ISBN = B.ISBN JOIN user_info U ON I.RID = U.UID WHERE L.LID = ? AND L.av = 2 AND L.ID = I.L_ID",(User_Data[0],))
+    cur.execute("SELECT L.ISBN,B.book_name,B.author,U.name,L.ID,I.transaction_id,L.LID,U.UID FROM lending_section L JOIN incomplete_transaction I ON L.LID = I.LID JOIN books B ON L.ISBN = B.ISBN JOIN user_info U ON I.RID = U.UID WHERE L.LID = ? AND L.av = 2 AND L.ID = I.L_ID",(User_Data[0],))
     pending_requests = cur.fetchall()
     print("pending requests = ",pending_requests)
     conn.close()
@@ -274,19 +286,19 @@ def search_for_books(search_by,query,refine_by,User_Data):
     conn,cur = connect()
     if search_by == 'ISBN':
         if refine_by == 'street':
-            cur.execute("SELECT L.LID,L.ID,L.ISBN,B.book_name,B.author,U.name,U.street,U.city,U.state,U.country FROM lending_section L JOIN books B ON L.ISBN=B.ISBN JOIN user_info U ON U.UID = L.LID WHERE L.ISBN = ? AND U.street = ? AND L.av = 1 AND LID != ?;",(query,User_Data[2],User_Data[0],))
+            cur.execute("SELECT L.LID,L.ID,L.ISBN,B.book_name,B.author,U.name,U.street,U.city,U.state,U.country,U.UID FROM lending_section L JOIN books B ON L.ISBN=B.ISBN JOIN user_info U ON U.UID = L.LID WHERE L.ISBN = ? AND U.street = ? AND L.av = 1 AND LID != ?;",(query,User_Data[2],User_Data[0],))
         elif refine_by == 'city':
-            cur.execute("SELECT L.LID,L.ID,L.ISBN,B.book_name,B.author,U.name,U.street,U.city,U.state,U.country FROM lending_section L JOIN books B ON L.ISBN=B.ISBN JOIN user_info U ON U.UID = L.LID WHERE L.ISBN = ? AND U.city = ? AND L.av = 1 AND LID != ?;",(query,User_Data[3],User_Data[0],))
+            cur.execute("SELECT L.LID,L.ID,L.ISBN,B.book_name,B.author,U.name,U.street,U.city,U.state,U.country,U.UID FROM lending_section L JOIN books B ON L.ISBN=B.ISBN JOIN user_info U ON U.UID = L.LID WHERE L.ISBN = ? AND U.city = ? AND L.av = 1 AND LID != ?;",(query,User_Data[3],User_Data[0],))
         elif refine_by == 'state':
-            cur.execute("SELECT L.LID,L.ID,L.ISBN,B.book_name,B.author,U.name,U.street,U.city,U.state,U.country FROM lending_section L JOIN books B ON L.ISBN=B.ISBN JOIN user_info U ON U.UID = L.LID WHERE L.ISBN = ? AND U.state = ? AND L.av = 1 AND LID != ?;",(query,User_Data[4],User_Data[0],))
+            cur.execute("SELECT L.LID,L.ID,L.ISBN,B.book_name,B.author,U.name,U.street,U.city,U.state,U.country,U.UID FROM lending_section L JOIN books B ON L.ISBN=B.ISBN JOIN user_info U ON U.UID = L.LID WHERE L.ISBN = ? AND U.state = ? AND L.av = 1 AND LID != ?;",(query,User_Data[4],User_Data[0],))
         
     else:
         if refine_by == 'street':
-            cur.execute("SELECT L.LID,L.ID,L.ISBN,B.book_name,B.author,U.name,U.street,U.city,U.state,U.country FROM lending_section L JOIN books B ON L.ISBN=B.ISBN JOIN user_info U ON U.UID = L.LID WHERE B.book_name LIKE '%"+query+"%' AND U.street = ? AND L.av = 1 AND LID != ?;",(User_Data[2],User_Data[0],))
+            cur.execute("SELECT L.LID,L.ID,L.ISBN,B.book_name,B.author,U.name,U.street,U.city,U.state,U.country,U.UID FROM lending_section L JOIN books B ON L.ISBN=B.ISBN JOIN user_info U ON U.UID = L.LID WHERE B.book_name LIKE '%"+query+"%' AND U.street = ? AND L.av = 1 AND LID != ?;",(User_Data[2],User_Data[0],))
         elif refine_by == 'city':
-            cur.execute("SELECT L.LID,L.ID,L.ISBN,B.book_name,B.author,U.name,U.street,U.city,U.state,U.country FROM lending_section L JOIN books B ON L.ISBN=B.ISBN JOIN user_info U ON U.UID = L.LID WHERE B.book_name LIKE '%"+query+"%' AND U.city = ? AND L.av = 1 AND LID != ?;",(User_Data[3],User_Data[0],))
+            cur.execute("SELECT L.LID,L.ID,L.ISBN,B.book_name,B.author,U.name,U.street,U.city,U.state,U.country,U.UID FROM lending_section L JOIN books B ON L.ISBN=B.ISBN JOIN user_info U ON U.UID = L.LID WHERE B.book_name LIKE '%"+query+"%' AND U.city = ? AND L.av = 1 AND LID != ?;",(User_Data[3],User_Data[0],))
         elif refine_by == 'state':
-            cur.execute("SELECT L.LID,L.ID,L.ISBN,B.book_name,B.author,U.name,U.street,U.city,U.state,U.country FROM lending_section L JOIN books B ON L.ISBN=B.ISBN JOIN user_info U ON U.UID = L.LID WHERE B.book_name LIKE '%"+query+"%' AND U.state = ? AND L.av = 1 AND LID != ?;",(User_Data[4],User_Data[0],))
+            cur.execute("SELECT L.LID,L.ID,L.ISBN,B.book_name,B.author,U.name,U.street,U.city,U.state,U.country,U.UID FROM lending_section L JOIN books B ON L.ISBN=B.ISBN JOIN user_info U ON U.UID = L.LID WHERE B.book_name LIKE '%"+query+"%' AND U.state = ? AND L.av = 1 AND LID != ?;",(User_Data[4],User_Data[0],))
 
     available_books = cur.fetchall()
     conn.close()    
@@ -299,3 +311,13 @@ def get_another_user(u_id):
     data = cur.fetchone()
     conn.close()
     return data
+
+def get_no_of_requests(User_Data):
+    conn,cur = connect()
+    cur.execute("SELECT COUNT(*) FROM incomplete_transaction WHERE RID = ?;",(User_Data[0],))
+    data = cur.fetchone()
+    conn.close()
+    if data:
+        return data
+    else:
+        return 0

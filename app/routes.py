@@ -9,11 +9,8 @@ create_db()
 
 User_Data = None
 New_Book_Data = None
+need_resume = False
 #0:UID , 1:name , 2:street , 3: city , 4:state , 5:country , 6:contact_no , 7:email , 8:password
-
-# @app.route('/home')
-# def home():
-#     return render_template('home.html')
 
 
 #Home/Login Page
@@ -35,7 +32,6 @@ def check_credentials():
         flag,data = verify_user(email,password)
         if flag==0:
             return render_template('login.html',msg = "Incorrect email or password")
-            #print("invalid user")
         else:
             User_Data = list(data)
             return render_template('user_home.html',username = User_Data[1])
@@ -88,10 +84,11 @@ def get_new_user():
 @app.route('/lending_section',methods = ['GET','POST'])
 
 def show_lends():
+    global need_resume
     lent_books = get_lent_books(User_Data)
     pending_requests = get_pending_requests(User_Data)
     print(lent_books)
-    return render_template('lending_section.html',name = User_Data[1],lent_books = lent_books,pending_requests = pending_requests)
+    return render_template('lending_section.html',name = User_Data[1],lent_books = lent_books,pending_requests = pending_requests,need_resume = need_resume)
 
 @app.route('/lend_another_book',methods = ['GET','POST'])
 def lend_another_book():
@@ -118,23 +115,17 @@ def verify_the_book():
     if request.method=='POST':
         isbn = request.form['isbn']
         book_name = request.form['book_name']
-        #print(type(isbn))
 
         if (isbn=="" or not str(isbn).isnumeric()) and book_name=="":
             return render_template('lend_another_book.html',warning_msg="Please enter book details!")
         else:
             flag,data = verify_book_details(isbn,book_name)
-            print(flag)
             if flag==True:
-                print("HI-BYE")
-                #for i in range(len(data)):
-                #      data[i] = list(data[i])
-                #    del data[i][3]
-                data = list(data)
-                del data[3]
-                #New_Book_Data = data
-                print(data)
-                return render_template('lend_another_book.html',right_msg=data,book = data[0])
+                for i in range(len(data)):
+                    data[i] = list(data[i])
+                    del data[i][3]
+
+                return render_template('lend_another_book.html',right_msg=data)
             else:
                 return render_template('lend_another_book.html',warning_msg=flag)
 
@@ -164,6 +155,7 @@ def remove_and_redirect():
 @app.route('/reading_section',methods = ['GET','POST'])
 def read_book(return_message = "",error_message ="",available_books =""):
     all_reads = get_all_reads(User_Data)
+    no_of_requests = get_no_of_requests(User_Data)
     return_message = request.args.get('return_message')
     renew_message = request.args.get('renew_message')
     prev_reads = []
@@ -174,7 +166,7 @@ def read_book(return_message = "",error_message ="",available_books =""):
         elif book[7] == 0:
             current_reads.append(book)
     
-    l = len(current_reads)
+    l = len(current_reads) + no_of_requests[0]
     return render_template('reading_section.html',username = User_Data[1],prev_reads = prev_reads,current_reads = current_reads,return_message = return_message,renew_message = renew_message,l = l )
 
 @app.route('/return_book', methods = ['POST'])
@@ -222,21 +214,16 @@ def search_book():
     print(type(search_by))
 
     if search_by == "ISBN":
-        #print(search_by.isnumeric())
         if not query.isnumeric():
             return redirect(url_for('ask_for_new_book',error_message = "Enter valid ISBN",prev_search_by = search_by))
         else:
             available_books = search_for_books(search_by,query,refine_by,User_Data)
-            # for i in range(len(available_books)):
-            #     available_books[i] = list(available_books[i]) 
-            #print(available_books)
             if available_books == []:
                 return redirect(url_for('ask_for_new_book',error_message = 'No matches found for the given ISBN and the location',available_books = available_books,prev_query = query,prev_search_by = search_by))
             else:
                 return redirect(url_for('ask_for_new_book',available_books = available_books,prev_query = query,prev_search_by = search_by))
     else:
         available_books = search_for_books(search_by,query,refine_by,User_Data)
-        #print(available_books)
         if available_books == []:
             return redirect(url_for('ask_for_new_book',error_message = "No matches found for the given name and location",prev_query = query,prev_search_by = search_by))
         else:
@@ -252,7 +239,20 @@ def request_and_redirect():
     else:
         return redirect(url_for('ask_for_new_book',error_message = 'Oops, something went wrong!Try again!'))
 
-    
+
+@app.route('/resume_lends',methods = ['GET','POST'])
+def resume_lends():
+    global need_resume
+    resume_lending(User_Data)
+    need_resume = False
+    return redirect(url_for('show_lends'))
+
+@app.route('/pause_lends',methods = ['GET','POST'])
+def pause_lends():
+    global need_resume
+    pause_lending(User_Data)
+    need_resume = True
+    return redirect(url_for('show_lends'))
                         
 #User Profile Page
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -277,7 +277,6 @@ def change_password():
     new_password = request.form['new_password']
     confirm_password = request.form['Confirm_password']
 
-    #checking if the old password entered is right
     if old_password == User_Data[8]:
         if old_password == new_password:
             return render_template('change_password.html',msg1 = 'Enter a new password')
@@ -287,12 +286,5 @@ def change_password():
             update_password(User_Data,new_password)
             User_Data[8] = new_password
             return render_template('user_profile.html',username = User_Data[1],email=User_Data[7],street=User_Data[2],city=User_Data[3],state=User_Data[4],country=User_Data[5],contact_number=User_Data[6],msg = "Password updated succesfully")
-            #return render_template('user_home.html',username = User_Data[1])
     else:
         return render_template('change_password.html',msg1 = 'Wrong password')
-
-
-# @app.route('/action', methods = ['POST'])
-# def test():
-#     message = request.form['subject'] 
-#     return render_template('reading_section.html',op1 = 'naruto',op2 = 'sasuke',msg = message)
