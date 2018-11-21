@@ -182,7 +182,7 @@
 
             .b3
             {
-                margin-left: 477px;
+                margin-left: 607px;
                 width: 100px;
                 height: 40px;
                 border: none;
@@ -246,10 +246,12 @@
             <div class = "buttons">
                 <button type = 'submit' onclick="window.location.href = '/lend_another_book'" class="b1">Lend another book</button>
                 <button type = 'submit' onclick="window.location.href = '/remove_lent_book'" class="b1">Remove a book</button>
-                {% if need_resume == True %}
+                {% if lent_books %}
+                    {% if need_resume == True %}
                     <button type = 'submit' onclick="window.location.href = '/resume_lends'" class="b3">Resume Lends</button>
-                {% else %}
-                    <button type = 'submit' onclick="window.location.href = '/pause_lends'" class="b3">Pause Lends</button>
+                    {% else %}
+                        <button type = 'submit' onclick="window.location.href = '/pause_lends'" class="b3">Pause Lends</button>
+                    {% endif %}
                 {% endif %}
             </div>
             <br>

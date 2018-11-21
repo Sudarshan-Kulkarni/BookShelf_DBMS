@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>Get Transactions</title>
+        <title>Transactions</title>
         <style type="text/css">
             *
             {
@@ -90,7 +90,7 @@
             table.a 
             {
                 table-layout: auto;
-                width:75%; 
+                width:70%; 
                 margin-left: 30px;
                 font-size: 20px;
 
@@ -109,29 +109,55 @@
 
             .c
             {
-                width:12%;
+                width:16%;
                 font-size: 20px;
-            }   
+            }  
+            .bb
+            {
+                text-decoration: underline;
+                font-size:20px;
+                border: none;
+                outline: none;
+                color: black;
+                cursor:pointer;
+                background: none;
+            }
         </style>
     </head>
     <body>
             <div class="custom-padding">
                     <nav>
-                        <div class="logo">Get Transcations</div>
+                        <div class="logo">Transactions</div>
                         <ul class="menu-area">
-                            <li><a href="/user_home">Home</a></li>
+                            <li><a href="/admin_home">Home</a></li>
                             <li><a href="/login">Logout</a></li>
                         </ul>
                     </nav>
                 </div>
                 <br>
-                <h1 style = "margin-left: 30px">Book Transcations<h1><br>
-                    <table  class="a">
-                            <tr>
-                            <th class="c">Transaction</th>
-                            <th class="b">Lender</th> 
-                            <th class="aaa">Reader</th>
-                            <th class="book">Book</th>
-                            </tr>
+                <h1 style = "margin-left: 30px">Book Transactions</h1>
+                    {% if all_trans %}
+                        <table  class="a">
+                                <tr>
+                                    <th class="c">Transaction ID</th>
+                                    <th class="book">Book Title</th>
+                                    <th class="b">Lender</th> 
+                                    <th class="aaa">Reader</th>                            
+                                </tr>
+                                {% for row in all_trans %}
+                                    <tr>
+                                        <form method="POST">
+                                            <td style="text-align:center">{{row[0]}}</td>
+                                            <td style="text-align:center">{{row[1]}}</td>
+                                            <td align="center"><button class="bb" name = 'another' value = {{row[2]}} type = "submit" onclick="javascript: form.action='/another_profile'">{{row[2]}}</button></td>
+                                            <td align="center"><button class="bb" name = 'another' value = {{row[3]}} type = "submit" onclick="javascript: form.action='/another_profile'">{{row[3]}}</button></td>
+                                        </form>                                    
+                                    </tr>
+                                {% endfor %}
+                    {% else %}
+                        <h1>There have been no transactions</h1>
+                    {% endif %}
                     </table>
+                </body>
+                    
 </html>

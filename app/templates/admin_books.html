@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>ADMIN BOOKS</title>
+        <title>Books</title>
         <style type="text/css" >
             *
             {
@@ -35,7 +35,7 @@
             table.a 
             {
                 table-layout: auto;
-                width:75%; 
+                width:70%; 
                 margin-left: 30px;
                 font-size: 20px;
 
@@ -43,19 +43,19 @@
 
             .aaa
             {
-                width:22%;
+                width:18%;
                 font-size: 20px;
             }
 
             .b
             {
-                width:25%;
+                width:23%;
                 font-size: 20px;
             }
 
             .c
             {
-                width:10%;
+                width:8%;
                 font-size: 20px;
             }   
 
@@ -155,23 +155,31 @@
     <body>
             <div class="custom-padding">
                     <nav>
-                        <div class="logo">ADMIN BOOKS</div>
+                        <div class="logo">Books</div>
                         <ul class="menu-area">
-                            <li><a href="/user_home">Home</a></li>
+                            <li><a href="/admin_home">Home</a></li>
                             <li><a href="/login">Logout</a></li>
                         </ul>
                     </nav>
                 </div>
                 <br>
-        <h1 style = "margin-left: 30px">Books<h1><br>
+        <h1 style = "margin-left: 30px">Books<h1>
                 <table  class="a">
                         <tr>
                         <th class="c">ISBN</th>
                         <th class="b">Title</th> 
                         <th class="aaa">Author</th>
+                        <th class="c">Rating</th>
                         </tr>
+                        {% for book in all_books %}
+                            <tr>
+                                {% for detail in book %}
+                                    <td style="text-align:center">{{detail}}</td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
                 </table>
                 <br>
-                <button type = 'submit' onclick="window.location.href = '/'" class="b1">Add Books</button>
+                <button type = 'submit' onclick="window.location.href = '/admin_add_book'" class="b1">Add</button>
 
 </html>

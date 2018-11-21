@@ -79,22 +79,13 @@
             h1
             {
                 color:black;
-                text-align:center;
                 font-size:40px;
                 margin-top:30px;
+                margin-left:35px;
             }
             .txtbox
             {
-                
-                width:235px;
-                height:30px;
-                border:none;
-                border-radius:03px;
-                border:1px solid black;
                 margin-left:35px;
-                padding:0 0 0 5px;
-                margin-top:15px;
-                border-left:03px solid #a86464;
             }
             .hd
             {
@@ -125,9 +116,9 @@
     <body>
             <div class="custom-padding">
                     <nav>
-                        <div class="logo">ADD BOOKS</div>
+                        <div class="logo">Add Book</div>
                         <ul class="menu-area">
-                            <li><a href="/user_home">Home</a></li>
+                            <li><a href="/admin_home">Home</a></li>
                             <li><a href="/login">Logout</a></li>
                         </ul>
                     </nav>
@@ -135,15 +126,18 @@
             <div>
                 <h1>Add New Book</h1>
                 <br>
-                <p class="hd">ISBN </p>
-                <input type="text" name="ISBN"  class="txtbox" >
+                <form method = 'POST' action = '/admin_add_to_books'>
+                <p class="hd">ISBN</p>
+                <input type="text" name="ISBN" placeholder="12345" class="txtbox" style="height: 35px; width: 200px;" >
                 <br><br>
                 <p class="hd">Title</p>
-                <input type="text" name="Title"  class="txtbox" >
+                <input type="text" name="Title" placeholder="abc fantasy" class="txtbox" style="height: 35px; width: 200px;" >
                 <br><br>
                 <p class="hd">Author</p>
-                <input type="text" name="Author"  class="txtbox" >
+                <input type="text" name="Author" placeholder="Ricky" class="txtbox" style="height: 35px; width: 200px;" >
                 <br><br>
-                <button type = 'submit' onclick="window.location.href = '/'" class="b1">Add Book</button>
+                <button type = 'submit' class="b1">Add Book</button>
+                </form>
             </div>
+            </body>
 </html>

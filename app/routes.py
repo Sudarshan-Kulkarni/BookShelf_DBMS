@@ -13,6 +13,38 @@ need_resume = False
 #0:UID , 1:name , 2:street , 3: city , 4:state , 5:country , 6:contact_no , 7:email , 8:password
 
 
+#Admin
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+@app.route('/admin_home')
+def admin_home_page():
+    username = request.args.get('username')
+    return render_template('admin_home.html')
+
+@app.route('/admin_books',methods = ['GET'])
+def admin_get_books():
+    all_books = get_all_books()
+    return render_template('admin_books.html',all_books = all_books)
+
+
+@app.route('/admin_get_trans',methods = ['GET'])
+def admin_get_transactions():
+    all_trans = get_all_transactions()
+    return render_template('admin_get_trans.html',all_trans = all_trans)
+
+@app.route('/admin_add_book',methods = ['GET'])
+def admin_add_book():
+    return render_template('admin_add_books.html')
+
+@app.route('/admin_add_to_books',methods = ['POST'])
+def admin_add_book_and_redirect():
+    book_isbn = request.form['ISBN']
+    book_name = request.form['Title']
+    book_author = request.form['Author']
+
+    admin_add_new_book(book_isbn,book_name,book_author)      
+    return redirect(url_for('admin_get_books'))
+
 #Home/Login Page
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 @app.route('/')
@@ -34,11 +66,17 @@ def check_credentials():
             return render_template('login.html',msg = "Incorrect email or password")
         else:
             User_Data = list(data)
-            return render_template('user_home.html',username = User_Data[1])
+            if User_Data[0] == 100:
+                return redirect(url_for('admin_home_page',username = User_Data[1]))
+            else:
+                return redirect(url_for('user_home_page',username = User_Data[1]))
+
 
 @app.route('/user_home')
 def user_home_page():
+    username = request.args.get('username')
     return render_template('user_home.html',username = User_Data[1])
+
 
 
 #Signup Page
@@ -123,7 +161,6 @@ def verify_the_book():
             if flag==True:
                 for i in range(len(data)):
                     data[i] = list(data[i])
-                    del data[i][3]
 
                 return render_template('lend_another_book.html',right_msg=data)
             else:
@@ -171,8 +208,11 @@ def read_book(return_message = "",error_message ="",available_books =""):
 
 @app.route('/return_book', methods = ['POST'])
 def return_and_redirect():
+    rating = request.form.get('rating',10)    
+    rating = 0.5 * int(rating)
     tran_id = request.form['return']
-    print("tran_id = ",tran_id)
+
+    rate_the_book(tran_id,rating)
     return_the_book(tran_id)
     return redirect(url_for('read_book',return_message = 'Returned the book successfully'))
 
@@ -194,10 +234,12 @@ def ask_for_new_book():
     prev_search_by = request.args.get('prev_search_by')
     success_message = request.args.get('success_message')
     for i in range(len(available_books)):
-        available_books[i] = eval(available_books[i])       
+        available_books[i] = eval(available_books[i])   
 
+    top_books = get_top_books()
+    
     print(available_books)
-    return render_template('read_new_book.html',success_message = success_message,error_message = error_message,available_books = available_books,prev_query = prev_query,prev_search_by = prev_search_by)
+    return render_template('read_new_book.html',success_message = success_message,error_message = error_message,available_books = available_books,prev_query = prev_query,prev_search_by = prev_search_by,top_books = top_books)
 
 @app.route('/search_for_book',methods = ['POST'])
 def search_book():

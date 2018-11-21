@@ -20,9 +20,11 @@ def create_db():
     cur.execute("DROP TRIGGER IF EXISTS update_due_date;")
     cur.execute("DROP TRIGGER IF EXISTS set_requests_status;")
     cur.execute("DROP VIEW IF EXISTS rem_books;")
-    
+    cur.execute("DROP VIEW IF EXISTS all_transactions;")
+    cur.execute("DROP INDEX IF EXISTS lender_index;")
 
     cur.execute("CREATE TABLE user_info(UID integer primary key autoincrement,name varchar(50) ,street varchar(30) ,city varchar(20) ,state varchar(20) ,country varchar(20) ,contact_no int(10) ,email varchar(50),password varchar(20));")
+    cur.execute("INSERT INTO user_info values(100,'Admin','Mars','Mars','Mars','Mars',0000000000,'admin@admin.com','admin123');")
     cur.execute("INSERT INTO user_info values(101,'Naruto','Ashokapuram','Mysuru','Karnataka','India',9016387328,'naruto@gmail.com','nar123');")
     cur.execute("INSERT INTO user_info values(null,'Sasuke','Indiranagar','Bangalore','Karnataka','India',8867352489,'sasuke@gmail.com','sas123');")
 
@@ -30,11 +32,11 @@ def create_db():
     cur.execute("INSERT INTO lending_section values(null ,101 ,10000 ,1 ,102 ,'2018-05-07' ,'2018-05-21',100);")
 
     cur.execute("CREATE TABLE reading_section(ID integer primary key autoincrement, RID integer ,ISBN int(5) , due_date date, extn_count int default 0 ,LID integer ,read_status integer , transaction_id integer, foreign key(ISBN) references books(ISBN));")
-    cur.execute("CREATE TABLE books(ISBN int(5) ,book_name varchar(40) ,author varchar(50) ,popularity int DEFAULT 0);")
-    cur.execute("INSERT INTO books values(10000,'Data Communications and Networking' ,'Forouzan',null);")
-    cur.execute("INSERT INTO books values(10001,'System Software' ,'Leland L. Beck',null);")
-    cur.execute("INSERT INTO books values(10002,'The Database Book' ,'Narain Gehani',null);")
-    cur.execute("INSERT INTO books values(10003,'Modern Operating Systems' ,'Andrew S. Tanenbaum',null);")
+    cur.execute("CREATE TABLE books(ISBN int(5) ,book_name varchar(40) ,author varchar(50) ,count int , rating Decimal(1,5));")
+    cur.execute("INSERT INTO books values(10000,'Data Communications and Networking' ,'Forouzan',0,0);")
+    cur.execute("INSERT INTO books values(10001,'System Software' ,'Leland L. Beck',0,0);")
+    cur.execute("INSERT INTO books values(10002,'The Database Book' ,'Narain Gehani',0,0);")
+    cur.execute("INSERT INTO books values(10003,'Modern Operating Systems' ,'Andrew S. Tanenbaum',0,0);")
 
     cur.execute("CREATE TABLE incomplete_transaction(transaction_id integer primary key autoincrement,RID integer ,LID integer ,L_ID integer ,t_date date);")
     cur.execute('INSERT INTO incomplete_transaction VALUES(100,null,null,null,null)')
@@ -57,6 +59,11 @@ def create_db():
                     SELECT ID,ISBN,book_name,author,LID FROM lending_section NATURAL JOIN books WHERE (av = 1 OR av = 3);
                 ''')
 
+    cur.execute('''CREATE VIEW all_transactions AS
+                    SELECT R.transaction_id,B.book_name,R.LID,R.RID FROM reading_section R NATURAL JOIN books B;
+                ''')
+
+    cur.execute("CREATE INDEX lender_index ON lending_section(LID);")
 
     conn.commit()
     conn.close()
@@ -81,7 +88,7 @@ def add_user(name,street,city,state,country,contact_no,email,password):
 def verify_book_details(isbn,query):
     conn,cur = connect()
     if (isbn=="" and query!="") or (not isbn.isnumeric() and query!=""):
-        cur.execute("SELECT * FROM books WHERE book_name LIKE '%"+query+"%';")
+        cur.execute("SELECT ISBN,book_name,author FROM books WHERE book_name LIKE '%"+query+"%';")
         data = cur.fetchall()
         conn.close()
         if(data):
@@ -90,14 +97,14 @@ def verify_book_details(isbn,query):
         else:
             return "Book name is incorrect!",None
     elif isbn.isnumeric():
-        cur.execute("SELECT * FROM books where ISBN=?;",(isbn,))
+        cur.execute("SELECT ISBN,book_name,author FROM books where ISBN=?;",(isbn,))
         data = cur.fetchall()
         if(data):
             print(data)
             conn.close()
             return True,data
         else:
-            cur.execute("SELECT * FROM books where book_name LIKE '%"+query+"%';")
+            cur.execute("SELECT ISBN,book_name,author FROM books where book_name LIKE '%"+query+"%';")
             data = cur.fetchall()
             if(data):
                 print(data)
@@ -130,6 +137,11 @@ def request_book(req_id,User_Data):
     conn.close()
     return True
 
+def admin_add_new_book(book_isbn,book_name,book_author):
+    conn,cur = connect()
+    cur.execute("INSERT INTO books VALUES(?,?,?,0,0);",(book_isbn,book_name,book_author,))
+    conn.commit()
+    conn.close()
     
 
 #Selection and Deletion
@@ -169,6 +181,27 @@ def accept_or_reject_the_book(tran_id,flag):
     cur.execute("DELETE FROM incomplete_transaction where transaction_id = ?;",(tran_id,))
     conn.commit()
     conn.close()
+
+def get_all_books():
+    conn,cur = connect()
+    cur.execute("SELECT ISBN,book_name,author,rating FROM books;")
+    all_books = cur.fetchall()
+    conn.close()
+    return all_books
+
+def get_all_transactions():
+    conn,cur = connect()
+    cur.execute("SELECT * FROM all_transactions;")
+    all_trans = cur.fetchall()
+    conn.close()
+    return all_trans
+
+def get_top_books():
+    conn,cur = connect()
+    cur.execute("SELECT ISBN,book_name,author,rating FROM books ORDER BY rating desc,count desc,ISBN asc;")
+    top_books = cur.fetchall()
+    return top_books
+
 
 #Updation
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -217,6 +250,18 @@ def pause_lending(User_Data):
     cur.execute("UPDATE lending_section SET av = 3 WHERE (av = 2 OR av = 1) AND LID = ?;",(User_Data[0],))
     conn.commit()
     conn.close()
+
+def rate_the_book(tran_id,rating):
+    conn,cur = connect()
+    cur.execute("UPDATE books SET count = count+1 WHERE ISBN = (SELECT ISBN FROM lending_section WHERE transaction_id = ?);",(tran_id,))
+    cur.execute("SELECT count,rating FROM books WHERE ISBN = (SELECT ISBN FROM lending_section WHERE transaction_id = ?);",(tran_id,))
+    data = cur.fetchone()
+    print(data)
+    new_rating = (((data[0]-1) * data[1]) + rating) / (data[0])
+    cur.execute("UPDATE books SET rating = ? WHERE ISBN = (SELECT ISBN FROM lending_section WHERE transaction_id = ?);",(new_rating,tran_id,))
+    conn.commit()
+    conn.close()
+
 
 #Joins
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------

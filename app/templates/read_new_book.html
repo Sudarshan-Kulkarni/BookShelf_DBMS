@@ -227,11 +227,11 @@
                 
                     <table  class="d">
                         <tr>
-                        <th class="c">ISBN</th>
-                        <th class="b">Title</th> 
-                        <th class="e">Author</th>
-                        <th class="ln">Lender</th>
-                        <th class = "aut">Request Book</th>
+                            <th class="c">ISBN</th>
+                            <th class="b">Title</th> 
+                            <th class="e">Author</th>
+                            <th class="ln">Lender</th>
+                            <th class = "aut">Request Book</th>
                         </tr>
                         {% for book in available_books %}
                         {% set id = book[1] %}
@@ -249,6 +249,25 @@
                             <form>
                         {% endfor %}
                     </table>
+                {% else %}
+                    <br>
+                    <h1 style = "margin-left: 30px">Top Rated Books</h1>
+                    <table  class="d">
+                        <tr>
+                            <th class="c">ISBN</th>
+                            <th class="b">Title</th> 
+                            <th class="e">Author</th>
+                            <th class="ln">Rating</th>
+                        </tr>
+                        {% for book in top_books %}
+                            <tr>
+                            {% for details in book[:-1] %}
+                                <td style="text-align:center">{{details}}</td>
+                            {% endfor %}
+                                <td style="text-align:center">{{book[-1]}}/5</td>
+                            </tr>
+                        {% endfor %}
+
                 {% endif %}
 
                 
