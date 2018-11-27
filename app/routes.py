@@ -50,6 +50,7 @@ def admin_add_book_and_redirect():
 @app.route('/')
 @app.route('/login')
 def login():
+    #get_all_tables();
     return render_template('login.html')
 
 
@@ -208,11 +209,12 @@ def read_book(return_message = "",error_message ="",available_books =""):
 
 @app.route('/return_book', methods = ['POST'])
 def return_and_redirect():
-    rating = request.form.get('rating',10)    
-    rating = 0.5 * int(rating)
-    tran_id = request.form['return']
-
-    rate_the_book(tran_id,rating)
+    rating = request.form.get('rating',0)
+    if rating != 0:    
+        rating = 0.5 * int(rating)
+        tran_id = request.form['return']
+        rate_the_book(tran_id,rating)
+    
     return_the_book(tran_id)
     return redirect(url_for('read_book',return_message = 'Returned the book successfully'))
 

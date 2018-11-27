@@ -23,22 +23,65 @@ def create_db():
     cur.execute("DROP VIEW IF EXISTS all_transactions;")
     cur.execute("DROP INDEX IF EXISTS lender_index;")
 
-    cur.execute("CREATE TABLE user_info(UID integer primary key autoincrement,name varchar(50) ,street varchar(30) ,city varchar(20) ,state varchar(20) ,country varchar(20) ,contact_no int(10) ,email varchar(50),password varchar(20));")
+    cur.execute("CREATE TABLE user_info(UID integer primary key autoincrement,name varchar(50) not null,street varchar(30) not null,city varchar(20) not null,state varchar(20) not null,country varchar(20) not null,contact_no int(10) not null,email varchar(50) not null,password varchar(20) not null);")
     cur.execute("INSERT INTO user_info values(100,'Admin','Mars','Mars','Mars','Mars',0000000000,'admin@admin.com','admin123');")
     cur.execute("INSERT INTO user_info values(101,'Naruto','Ashokapuram','Mysuru','Karnataka','India',9016387328,'naruto@gmail.com','nar123');")
-    cur.execute("INSERT INTO user_info values(null,'Sasuke','Indiranagar','Bangalore','Karnataka','India',8867352489,'sasuke@gmail.com','sas123');")
+    cur.execute("INSERT INTO user_info values(null,'User','Indiranagar','Bangalore','Karnataka','India',8867352489,'user@gmail.com','sas123');")
 
-    cur.execute("CREATE TABLE lending_section(ID integer primary key autoincrement, LID integer ,ISBN int(5) ,av int(1) ,RID integer ,lent_date date ,due_date date , transaction_id integer, foreign key(ISBN) references books(ISBN));")
+    cur.execute("CREATE TABLE lending_section(ID integer primary key autoincrement, LID integer ,ISBN int(5) ,av int(1) ,RID integer ,lent_date date ,due_date date , transaction_id integer, foreign key(LID) references user_info(UID) ,foreign key(RID) references user_info(UID) ,foreign key(ISBN) references books(ISBN));")
     cur.execute("INSERT INTO lending_section values(null ,101 ,10000 ,1 ,102 ,'2018-05-07' ,'2018-05-21',100);")
 
-    cur.execute("CREATE TABLE reading_section(ID integer primary key autoincrement, RID integer ,ISBN int(5) , due_date date, extn_count int default 0 ,LID integer ,read_status integer , transaction_id integer, foreign key(ISBN) references books(ISBN));")
-    cur.execute("CREATE TABLE books(ISBN int(5) ,book_name varchar(40) ,author varchar(50) ,count int , rating Decimal(1,5));")
+    cur.execute("CREATE TABLE reading_section(ID integer primary key autoincrement, RID integer ,ISBN int(5) , due_date date, extn_count int default 0 ,LID integer ,read_status integer , transaction_id integer, foreign key(LID) references user_info(UID) ,foreign key(RID) references user_info(UID) ,foreign key(ISBN) references books(ISBN));")
+    cur.execute("CREATE TABLE books(ISBN int(5) primary key ,book_name varchar(40) not null,author varchar(50) not null,count int default 0, rating Decimal(1,5) default 0);")
     cur.execute("INSERT INTO books values(10000,'Data Communications and Networking' ,'Forouzan',0,0);")
     cur.execute("INSERT INTO books values(10001,'System Software' ,'Leland L. Beck',0,0);")
     cur.execute("INSERT INTO books values(10002,'The Database Book' ,'Narain Gehani',0,0);")
     cur.execute("INSERT INTO books values(10003,'Modern Operating Systems' ,'Andrew S. Tanenbaum',0,0);")
+    cur.execute("INSERT INTO books values(10004,'Angels & Demons' ,'Dan Brown',0,0);")
+    cur.execute("INSERT INTO books values(10005,'The Da Vinci Code' ,'Dan Brown',0,0);")
+    cur.execute("INSERT INTO books values(10006,'The Lost Symbol' ,'Dan Brown',0,0);")
+    cur.execute("INSERT INTO books values(10007,'Inferno' ,'Dan Brown',0,0);")
+    cur.execute("INSERT INTO books values(10008,'Origin' ,'Dan Brown',0,0);")
+    cur.execute("INSERT INTO books values(10009,'Percy Jackson and the Lightning Thief' ,'Rick Riordan',0,0);")
+    cur.execute("INSERT INTO books values(10010,'Percy Jackson and the Sea Of Monsters' ,'Rick Riordan',0,0);")
+    cur.execute("INSERT INTO books values(10011,'Percy Jackson and the Titan''s Curse' ,'Rick Riordan',0,0);")
+    cur.execute("INSERT INTO books values(10012,'Percy Jackson and the Battle of the Labyrinth' ,'Rick Riordan',0,0);")
+    cur.execute("INSERT INTO books values(10013,'Percy Jackson and the Last Olympian' ,'Rick Riordan',0,0);")
+    cur.execute("INSERT INTO books values(10014,'The Lost Hero' ,'Rick Riordan',0,0);")
+    cur.execute("INSERT INTO books values(10015,'The Son of Neptune' ,'Rick Riordan',0,0);")
+    cur.execute("INSERT INTO books values(10016,'The Mark of Athena' ,'Rick Riordan',0,0);")
+    cur.execute("INSERT INTO books values(10017,'The House of Hades' ,'Rick Riordan',0,0);")
+    cur.execute("INSERT INTO books values(10018,'The Blood of Olympus' ,'Rick Riordan',0,0);")
+    cur.execute("INSERT INTO books values(10019,'The Immortals of Meluha' ,'Amish Tripathi',0,0);")
+    cur.execute("INSERT INTO books values(10020,'The Secret of the Nagas' ,'Amish Tripathi',0,0);")
+    cur.execute("INSERT INTO books values(10021,'The Oath of the Vayuputras' ,'Amish Tripathi',0,0);")
+    cur.execute("INSERT INTO books values(10022,'The Hunger Games' ,'Suzanne Collins',0,0);")
+    cur.execute("INSERT INTO books values(10023,'Catching Fire' ,'Suzanne Collins',0,0);")
+    cur.execute("INSERT INTO books values(10024,'Mockingjay' ,'Suzanne Collins',0,0);")
+    cur.execute("INSERT INTO books values(10025,'The Name of the Wind' ,'Patrick Rothfuss',0,0);")
+    cur.execute("INSERT INTO books values(10026,'The Wise Man''s Fear' ,'Patrick Rothfuss',0,0);")
+    cur.execute("INSERT INTO books values(10027,'The Final Empire' ,'Brandon Sanderson',0,0);")
+    cur.execute("INSERT INTO books values(10028,'The Well of Ascension' ,'Brandon Sanderson',0,0);")
+    cur.execute("INSERT INTO books values(10029,'The Hero of Ages' ,'Brandon Sanderson',0,0);")
+    cur.execute("INSERT INTO books values(10030,'Harry Potter and the Sorcerer''s Stone' ,'J.K. Rowling',0,0);")
+    cur.execute("INSERT INTO books values(10031,'Harry Potter and the Chamber of Secrets' ,'J.K. Rowling',0,0);")
+    cur.execute("INSERT INTO books values(10032,'Harry Potter and the Prisoner of Azkaban' ,'J.K. Rowling',0,0);")
+    cur.execute("INSERT INTO books values(10033,'Harry Potter and the Goblet of Fire' ,'J.K. Rowling',0,0);")
+    cur.execute("INSERT INTO books values(10034,'Harry Potter and the Order of the Phoenix' ,'J.K. Rowling',0,0);")
+    cur.execute("INSERT INTO books values(10036,'Harry Potter and the Deathly Hallows' ,'J.K. Rowling',0,0);")
+    cur.execute("INSERT INTO books values(10037,'The Martian' ,'Andy Weir',0,0);")
+    cur.execute("INSERT INTO books values(10038,'The Girl with the Dragon Tattoo' ,'Stieg Larsson',0,0);")
+    cur.execute("INSERT INTO books values(10039,'The Way of Kings' ,'Brandon Sanderson',0,0);")
+    cur.execute("INSERT INTO books values(10040,'Words of Radiance' ,'Brandon Sanderson',0,0);")
+    cur.execute("INSERT INTO books values(10041,'Oathbringer' ,'Brandon Sanderson',0,0);")
+    cur.execute("INSERT INTO books values(10042,'Divergent' ,'Veronica Roth',0,0);")
+    cur.execute("INSERT INTO books values(10043,'Insurgent' ,'Veronica Roth',0,0);")
+    cur.execute("INSERT INTO books values(10044,'Allegiant' ,'Veronica Roth',0,0);")
+    cur.execute("INSERT INTO books values(10045,'Management and Entrpreneurship' ,'N.V.R. Naidu',0,0);")
 
-    cur.execute("CREATE TABLE incomplete_transaction(transaction_id integer primary key autoincrement,RID integer ,LID integer ,L_ID integer ,t_date date);")
+    
+
+    cur.execute("CREATE TABLE incomplete_transaction(transaction_id integer primary key autoincrement,RID integer ,LID integer ,L_ID integer ,t_date date, foreign key(LID) references user_info(UID) ,foreign key(RID) references user_info(UID) ,foreign key(L_ID) references lending_section(ID));")
     cur.execute('INSERT INTO incomplete_transaction VALUES(100,null,null,null,null)')
 
     cur.execute('''CREATE TRIGGER set_request_status AFTER INSERT ON incomplete_transaction
@@ -147,6 +190,31 @@ def admin_add_new_book(book_isbn,book_name,book_author):
 #Selection and Deletion
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+# def get_all_tables():
+#     conn,cur = connect()
+#     cur.execute(".schema user_info;");
+#     data = cur.fetchall()
+#     print(data)
+
+#     cur.execute(".schema books;");
+#     data = cur.fetchall()
+#     print(data)
+
+#     cur.execute(".schema lending_section;");
+#     data = cur.fetchall()
+#     print(data)
+
+#     cur.execute(".schema reading_section;");
+#     data = cur.fetchall()
+#     print(data)
+
+#     cur.execute(".schema incomplete_transaction;");
+#     data = cur.fetchall()
+#     print(data)
+
+#     conn.close()
+
+
 def verify_user(email,password):
     conn,cur = connect()
     cur.execute("SELECT * FROM user_info WHERE email = ? AND password = ?;",[email,password])
@@ -198,7 +266,7 @@ def get_all_transactions():
 
 def get_top_books():
     conn,cur = connect()
-    cur.execute("SELECT ISBN,book_name,author,rating FROM books ORDER BY rating desc,count desc,ISBN asc;")
+    cur.execute("SELECT ISBN,book_name,author,rating FROM books ORDER BY rating desc,count desc,ISBN asc LIMIT 5;")
     top_books = cur.fetchall()
     return top_books
 

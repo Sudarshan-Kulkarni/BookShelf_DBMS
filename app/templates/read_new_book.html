@@ -202,14 +202,16 @@
                             {% endif %}                            
                         </select>
                         <br><br>
+                        
+                        <input type="text" name="query" class="a" style = "margin-left: 30px" placeholder="Search query here ..">
+                        <td><button class="b1" name = 'search' type = "submit" onclick="javascript: form.action='/search_for_book'">Search</button></td>
+                        <br><br>
                         <h3 style = "margin-left: 30px">Refine by</h3>
                         <select style="width: 10% ; margin-left: 30px" name = "refine_by">
                             <option value="street">Street/Locality</option>
                             <option value="city">City</option>
                             <option value="state">State</option>
                         </select>
-                        <br><br><input type="text" name="query" class="a" style = "margin-left: 30px" placeholder="Search query here ..">
-                        <td><button class="b1" name = 'search' type = "submit" onclick="javascript: form.action='/search_for_book'">Search</button></td>
                         
                         <input type="text" value={{prev_query}} name="prev_search_query" style="display:none">
                         <br>
