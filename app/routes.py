@@ -162,8 +162,8 @@ def verify_the_book():
             if flag==True:
                 for i in range(len(data)):
                     data[i] = list(data[i])
-
-                return render_template('lend_another_book.html',right_msg=data)
+                    l = len(data)
+                return render_template('lend_another_book.html',right_msg=data,len = l)
             else:
                 return render_template('lend_another_book.html',warning_msg=flag)
 
@@ -241,7 +241,8 @@ def ask_for_new_book():
     top_books = get_top_books()
     
     print(available_books)
-    return render_template('read_new_book.html',success_message = success_message,error_message = error_message,available_books = available_books,prev_query = prev_query,prev_search_by = prev_search_by,top_books = top_books)
+    l = len(available_books)
+    return render_template('read_new_book.html',success_message = success_message,error_message = error_message,available_books = available_books,prev_query = prev_query,prev_search_by = prev_search_by,top_books = top_books,len = l)
 
 @app.route('/search_for_book',methods = ['POST'])
 def search_book():

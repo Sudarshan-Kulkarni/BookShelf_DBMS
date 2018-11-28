@@ -35,7 +35,7 @@
             table.a 
             {
                 table-layout: auto;
-                width:70%; 
+                width:100%; 
                 margin-left: 30px;
                 font-size: 20px;
 
@@ -164,6 +164,7 @@
                 </div>
                 <br>
         <h1 style = "margin-left: 30px">Books<h1>
+            <div style ="height:47.8%;;overflow-y:scroll;overflow-x:hidden;">
                 <table  class="a">
                         <tr>
                         <th class="c">ISBN</th>
@@ -179,6 +180,7 @@
                             </tr>
                         {% endfor %}
                 </table>
+            </div>
                 <br>
                 <button type = 'submit' onclick="window.location.href = '/admin_add_book'" class="b1">Add</button>
 

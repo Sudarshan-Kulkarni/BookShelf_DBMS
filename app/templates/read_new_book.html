@@ -135,6 +135,15 @@
 
             }
 
+            table.newclass
+            {
+                table-layout: auto;
+                width:100%; 
+                margin-left: 30px;
+                font-size: 20px;
+
+            }
+
             .b
             {
                 width:25%;
@@ -226,8 +235,10 @@
                 </form>
                 
                 {% if available_books %}
-                
-                    <table  class="d">
+                {% if len > 5 %}
+                <div style ="height:31.8%;overflow-y:scroll;overflow-x:hidden;">
+                {% endif %}
+                    <table  class="newclass">
                         <tr>
                             <th class="c">ISBN</th>
                             <th class="b">Title</th> 
@@ -251,6 +262,9 @@
                             <form>
                         {% endfor %}
                     </table>
+                {% if len > 5 %}
+                </div>
+                {% endif %}
                 {% else %}
                     <br>
                     <h1 style = "margin-left: 30px">Top Rated Books</h1>
